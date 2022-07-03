@@ -19,3 +19,37 @@ impl TextRange {
     &text[self.start_index..self.end_index]
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::TextRange;
+
+  #[test]
+  fn test_len() {
+    let range = TextRange::new(1, 2);
+
+    let result = range.len();
+
+    assert_eq!(result, 1);
+  }
+
+  #[test]
+  fn test_get_ascii() {
+    let text = "hello world";
+    let range = TextRange::new(1, 2);
+
+    let result = range.get(text);
+
+    assert_eq!(result, "e");
+  }
+
+  #[test]
+  fn test_get_unicode() {
+    let text = "你好世界";
+    let range = TextRange::new(3, 6);
+
+    let result = range.get(text);
+
+    assert_eq!(result, "好");
+  }
+}

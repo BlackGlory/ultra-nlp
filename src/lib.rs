@@ -4,6 +4,7 @@ mod segment_fully;
 mod segment_forward_longest;
 mod segment_backward_longest;
 mod segment_bidirectional_longest;
+mod utils;
 
 pub use dictionary::*;
 pub use text_range::*;
