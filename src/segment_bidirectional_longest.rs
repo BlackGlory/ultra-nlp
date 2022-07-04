@@ -1,27 +1,16 @@
 use super::{
-    ForwardDictionary,
-    BackwardDictionary,
-    TextRange,
-    segment_forward_longest,
-    segment_backward_longest,
+    segment_backward_longest, segment_forward_longest, BackwardDictionary, ForwardDictionary, Match,
 };
 
+// 待generator稳定, 改为generator, 以便返回Iterator.
 pub fn segment_bidirectional_longest(
     text: &str,
     forward_dict: &ForwardDictionary,
     backward_dict: &BackwardDictionary,
     ignore_unmatched_chars: bool,
-) -> Vec<TextRange> {
-    let forward_results = segment_forward_longest(
-        text,
-        forward_dict,
-        ignore_unmatched_chars
-    );
-    let backward_results = segment_backward_longest(
-        text,
-        backward_dict,
-        ignore_unmatched_chars
-    );
+) -> Vec<Match> {
+    let forward_results = segment_forward_longest(text, forward_dict, ignore_unmatched_chars);
+    let backward_results = segment_backward_longest(text, backward_dict, ignore_unmatched_chars);
 
     if forward_results.len() < backward_results.len() {
         forward_results
@@ -39,11 +28,11 @@ pub fn segment_bidirectional_longest(
     }
 }
 
-fn count_single_chars(words: &Vec<TextRange>, text: &str) -> usize {
+fn count_single_chars(results: &Vec<Match>, text: &str) -> usize {
     let mut result = 0;
 
-    for word in words {
-        if word.get(&text).chars().count() == 1 {
+    for mat in results {
+        if mat.range.extract(&text).chars().count() == 1 {
             result += 1;
         }
     }
@@ -53,40 +42,35 @@ fn count_single_chars(words: &Vec<TextRange>, text: &str) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use super::{
-        segment_bidirectional_longest,
-        ForwardDictionary,
-        BackwardDictionary
-    };
+    use super::{segment_bidirectional_longest, BackwardDictionary, ForwardDictionary};
 
     #[test]
     fn test_should_returns_forward_longest_results() {
         let text = " 当下雨天地面积水, hello world ";
-        let dict = vec!["当", "当下", "下雨", "下雨天", "雨天", "地面", "积水", "你好世界"];
+        let dict = vec![
+            "当",
+            "当下",
+            "下雨",
+            "下雨天",
+            "雨天",
+            "地面",
+            "积水",
+            "你好世界",
+        ];
         let forward_dict = ForwardDictionary::new(dict.clone());
         let backward_dict = BackwardDictionary::new(dict.clone());
 
         // 正向结果: [当下, 雨天, 地面, 积水]
         // 逆向结果: [当, 下雨天, 地面, 积水]
         // 结果数量相同, 单字数量正向结果少于逆向结果, 返回单字数量更少的正向结果.
-        let result = segment_bidirectional_longest(
-            text,
-            &forward_dict,
-            &backward_dict,
-            true
-        );
+        let result = segment_bidirectional_longest(text, &forward_dict, &backward_dict, true);
 
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.get(text))
+                .map(|x| x.range.extract(text))
                 .collect::<Vec<_>>(),
-            vec![
-                "当下",
-                "雨天",
-                "地面",
-                "积水"
-            ]
+            vec!["当下", "雨天", "地面", "积水"]
         )
     }
 
@@ -100,22 +84,14 @@ mod tests {
         // 正向结果: [商品, 和服]
         // 逆向结果: [商品, 服务]
         // 结果数量相同, 单字数量也相同, 返回逆向结果.
-        let result = segment_bidirectional_longest(
-            text,
-            &forward_dict,
-            &backward_dict,
-            true
-        );
+        let result = segment_bidirectional_longest(text, &forward_dict, &backward_dict, true);
 
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.get(text))
+                .map(|x| x.range.extract(text))
                 .collect::<Vec<_>>(),
-            vec![
-                "商品",
-                "服务",
-            ]
+            vec!["商品", "服务",]
         )
     }
 
@@ -126,22 +102,14 @@ mod tests {
         let forward_dict = ForwardDictionary::new(dict.clone());
         let backward_dict = BackwardDictionary::new(dict.clone());
 
-        let result = segment_bidirectional_longest(
-            text,
-            &forward_dict,
-            &backward_dict,
-            true
-        );
+        let result = segment_bidirectional_longest(text, &forward_dict, &backward_dict, true);
 
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.get(text))
+                .map(|x| x.range.extract(text))
                 .collect::<Vec<_>>(),
-            vec![
-                "商品",
-                "服务",
-            ]
+            vec!["商品", "服务",]
         )
     }
 
@@ -152,37 +120,16 @@ mod tests {
         let forward_dict = ForwardDictionary::new(dict.clone());
         let backward_dict = BackwardDictionary::new(dict.clone());
 
-        let result = segment_bidirectional_longest(
-            text,
-            &forward_dict,
-            &backward_dict,
-            false
-        );
+        let result = segment_bidirectional_longest(text, &forward_dict, &backward_dict, false);
 
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.get(text))
+                .map(|x| x.range.extract(text))
                 .collect::<Vec<_>>(),
             vec![
-                " ",
-                "商品",
-                "和",
-                "服务",
-                ",",
-                " ",
-                "h",
-                "e",
-                "l",
-                "l",
-                "o",
-                " ",
-                "w",
-                "o",
-                "r",
-                "l",
-                "d",
-                " ",
+                " ", "商品", "和", "服务", ",", " ", "h", "e", "l", "l", "o", " ", "w", "o", "r",
+                "l", "d", " ",
             ]
         )
     }

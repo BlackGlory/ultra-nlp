@@ -1,56 +1,58 @@
-use super::{
-    ForwardDictionary,
-    TextRange,
-    utils::split_as_char_ranges,
-};
+use super::{utils::split_as_char_ranges, ForwardDictionary, Match, TextRange};
 
+// 待generator稳定, 改为generator, 以便返回Iterator.
 pub fn segment_forward_longest(
     text: &str,
     dict: &ForwardDictionary,
     ignore_unmatched_chars: bool,
-) -> Vec<TextRange> {
+) -> Vec<Match> {
     let text = text.to_lowercase();
-    let mut results: Vec<TextRange> = vec![];
+    let mut results: Vec<Match> = vec![];
 
     let mut start_index = 0;
     while start_index < text.len() {
         if text.is_char_boundary(start_index) {
-            let mut iter =
-                dict.acdat.leftmost_find_iter(&text[start_index..]);
+            let mut iter = dict.acdat.leftmost_find_iter(&text[start_index..]);
 
             match iter.next() {
                 Some(mat) => {
-                    let word = TextRange::new(
-                        start_index + mat.start(),
-                        start_index + mat.end()
+                    let real_mat_start_index = start_index + mat.start();
+                    let real_mat_end_index = start_index + mat.end();
+                    let result = Match::new(
+                        TextRange::new(real_mat_start_index, real_mat_end_index),
+                        dict.value_to_tf_idf.get(mat.value()).map(|x| *x),
                     );
 
                     if !ignore_unmatched_chars {
-                        for range in split_as_char_ranges(
-                            &text[start_index..word.start_index]
-                        ) {
-                            let char = TextRange::new(
-                                start_index + range.start_index,
-                                start_index + range.end_index,
+                        for range in
+                            split_as_char_ranges(&text[start_index..start_index + mat.start()])
+                        {
+                            let result = Match::new(
+                                TextRange::new(
+                                    start_index + range.start_index,
+                                    start_index + range.end_index,
+                                ),
+                                None,
                             );
-                            results.push(char);
+                            results.push(result);
                         }
                     }
 
-                    start_index = word.end_index;
+                    start_index = real_mat_end_index;
 
-                    results.push(word);
-                },
+                    results.push(result);
+                }
                 None => {
                     if !ignore_unmatched_chars {
-                        for range in split_as_char_ranges(
-                            &text[start_index..]
-                        ) {
-                            let char = TextRange::new(
-                                start_index + range.start_index,
-                                start_index + range.end_index,
+                        for range in split_as_char_ranges(&text[start_index..]) {
+                            let result = Match::new(
+                                TextRange::new(
+                                    start_index + range.start_index,
+                                    start_index + range.end_index,
+                                ),
+                                None,
                             );
-                            results.push(char);
+                            results.push(result);
                         }
                     }
 
@@ -72,65 +74,34 @@ mod tests {
     #[test]
     fn test_ignore_unmatched_chars() {
         let text = " 商品和服务, hello world ";
-        let dict = ForwardDictionary::new(
-            vec!["商品", "和服", "服务", "你好世界"]
-        );
+        let dict = ForwardDictionary::new(vec!["商品", "和服", "服务", "你好世界"]);
 
-        let result = segment_forward_longest(
-            text,
-            &dict,
-            true,
-        );
+        let result = segment_forward_longest(text, &dict, true);
 
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.get(text))
+                .map(|x| x.range.extract(text))
                 .collect::<Vec<_>>(),
-            vec![
-                "商品",
-                "和服",
-            ]
+            vec!["商品", "和服",]
         );
     }
 
     #[test]
     fn test_keep_unmatched_chars() {
         let text = " 商品和服务, hello world ";
-        let dict = ForwardDictionary::new(
-            vec!["商品", "和服", "服务", "你好世界"]
-        );
+        let dict = ForwardDictionary::new(vec!["商品", "和服", "服务", "你好世界"]);
 
-        let result = segment_forward_longest(
-            text,
-            &dict,
-            false,
-        );
+        let result = segment_forward_longest(text, &dict, false);
 
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.get(text))
+                .map(|x| x.range.extract(text))
                 .collect::<Vec<_>>(),
             vec![
-                " ",
-                "商品",
-                "和服",
-                "务",
-                ",",
-                " ",
-                "h",
-                "e",
-                "l",
-                "l",
-                "o",
-                " ",
-                "w",
-                "o",
-                "r",
-                "l",
-                "d",
-                " ",
+                " ", "商品", "和服", "务", ",", " ", "h", "e", "l", "l", "o", " ", "w", "o", "r",
+                "l", "d", " ",
             ],
         );
     }
