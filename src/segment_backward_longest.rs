@@ -109,4 +109,22 @@ mod tests {
             ]
         );
     }
+
+    #[test]
+    fn test_tf_idf() {
+        let text = " 商品和服务, hello world ";
+        let dict = BackwardDictionary::new_with_tf_idf(vec![
+            ("商品", 0f64),
+            ("和服", 1f64),
+            ("服务", 2f64),
+            ("你好世界", 3f64),
+        ]);
+
+        let result = segment_backward_longest(text, &dict, true);
+
+        assert_eq!(
+            result.iter().map(|x| x.tf_idf.unwrap()).collect::<Vec<_>>(),
+            vec![0f64, 2f64]
+        );
+    }
 }

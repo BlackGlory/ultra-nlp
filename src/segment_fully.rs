@@ -115,4 +115,24 @@ mod tests {
             ]
         );
     }
+
+    #[test]
+    fn test_tf_idf() {
+        let text = " 南京市长江大桥, hello world ";
+        let dict = StandardDictionary::new_with_tf_idf(vec![
+            ("南京", 0f64),
+            ("南京市", 1f64),
+            ("市长", 2f64),
+            ("长江", 3f64),
+            ("大桥", 4f64),
+            ("你好世界", 5f64),
+        ]);
+
+        let result = segment_fully(text, &dict, true);
+
+        assert_eq!(
+            result.iter().map(|x| x.tf_idf.unwrap()).collect::<Vec<_>>(),
+            vec![0f64, 1f64, 2f64, 3f64, 4f64]
+        );
+    }
 }

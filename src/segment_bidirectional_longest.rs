@@ -133,4 +133,31 @@ mod tests {
             ]
         )
     }
+
+    #[test]
+    fn test_tf_idf() {
+        let text = " 当下雨天地面积水, hello world ";
+        let dict: Vec<(&str, f64)> = vec![
+            ("当", 0f64),
+            ("当下", 1f64),
+            ("下雨", 2f64),
+            ("下雨天", 3f64),
+            ("雨天", 4f64),
+            ("地面", 5f64),
+            ("积水", 6f64),
+            ("你好世界", 7f64),
+        ];
+        let forward_dict = ForwardDictionary::new_with_tf_idf(dict.clone());
+        let backward_dict = BackwardDictionary::new_with_tf_idf(dict.clone());
+
+        // 正向结果: [当下, 雨天, 地面, 积水]
+        // 逆向结果: [当, 下雨天, 地面, 积水]
+        // 结果数量相同, 单字数量正向结果少于逆向结果, 返回单字数量更少的正向结果.
+        let result = segment_bidirectional_longest(text, &forward_dict, &backward_dict, true);
+
+        assert_eq!(
+            result.iter().map(|x| x.tf_idf.unwrap()).collect::<Vec<_>>(),
+            vec![1f64, 4f64, 5f64, 6f64]
+        )
+    }
 }
