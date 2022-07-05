@@ -1,4 +1,4 @@
-use super::Match;
+use crate::Match;
 
 pub fn extract_keywords(matches: &Vec<Match>, top: usize) -> Vec<Match> {
     let mut matches = matches.clone();
@@ -26,8 +26,7 @@ fn normalize_tf_idf(tf_idf: Option<f64>) -> f64 {
 
 #[cfg(test)]
 mod tests {
-    use super::super::TextRange;
-    use super::{extract_keywords, Match};
+    use crate::{extract_keywords, Match, TextRange};
 
     #[test]
     fn test_matches_more_than_top() {

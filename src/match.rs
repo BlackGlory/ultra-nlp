@@ -1,4 +1,4 @@
-use super::TextRange;
+use crate::TextRange;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Match {

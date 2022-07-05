@@ -23,7 +23,7 @@ impl TextRange {
 
 #[cfg(test)]
 mod tests {
-    use super::TextRange;
+    use crate::TextRange;
 
     #[test]
     fn test_len() {

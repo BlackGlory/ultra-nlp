@@ -1,4 +1,4 @@
-use super::{
+use crate::{
     segment_backward_longest,
     segment_forward_longest,
     BackwardDictionary,
@@ -64,7 +64,7 @@ fn count_single_chars<T: AsRef<str>>(
 
 #[cfg(test)]
 mod tests {
-    use super::{
+    use crate::{
         segment_bidirectional_longest,
         BackwardDictionary,
         ForwardDictionary,

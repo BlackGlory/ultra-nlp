@@ -1,4 +1,4 @@
-use super::{
+use crate::{
     Match,
     StandardDictionary,
     TextRange,
@@ -104,7 +104,7 @@ pub fn segment_fully<T: AsRef<str>>(
 
 #[cfg(test)]
 mod tests {
-    use super::{
+    use crate::{
         segment_fully,
         StandardDictionary,
         BehaviorForUnmatched,

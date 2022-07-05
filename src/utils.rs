@@ -1,4 +1,4 @@
-use super::TextRange;
+use crate::TextRange;
 
 pub fn split_as_char_ranges(
     text: &str
@@ -14,7 +14,7 @@ pub fn split_as_char_ranges(
 
 #[cfg(test)]
 mod tests {
-    use super::split_as_char_ranges;
+    use crate::utils::split_as_char_ranges;
 
     #[test]
     fn test_split_as_char_ranges() {

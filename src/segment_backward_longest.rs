@@ -1,4 +1,4 @@
-use super::{
+use crate::{
     BackwardDictionary,
     Match,
     TextRange,
@@ -122,7 +122,7 @@ pub fn segment_backward_longest<T: AsRef<str>>(
 
 #[cfg(test)]
 mod tests {
-    use super::{
+    use crate::{
         segment_backward_longest,
         BackwardDictionary,
         BehaviorForUnmatched

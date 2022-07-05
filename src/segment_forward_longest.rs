@@ -1,4 +1,4 @@
-use super::{
+use crate::{
     ForwardDictionary,
     Match,
     TextRange,
@@ -110,7 +110,7 @@ pub fn segment_forward_longest<T: AsRef<str>>(
 
 #[cfg(test)]
 mod tests {
-    use super::{
+    use crate::{
         segment_forward_longest,
         ForwardDictionary,
         BehaviorForUnmatched
