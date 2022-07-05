@@ -1,11 +1,15 @@
 use super::TextRange;
 
-pub fn split_as_char_ranges(text: &str) -> impl Iterator<Item = TextRange> + '_ {
-    text.char_indices().map(|(start_index, char)| {
-        let end_index = start_index + char.len_utf8();
+pub fn split_as_char_ranges(
+    text: &str
+) -> impl Iterator<Item = TextRange> + '_ {
+    text
+        .char_indices()
+        .map(|(start_index, char)| {
+            let end_index = start_index + char.len_utf8();
 
-        TextRange::new(start_index, end_index)
-    })
+            TextRange::new(start_index, end_index)
+        })
 }
 
 #[cfg(test)]
@@ -19,10 +23,29 @@ mod tests {
         let result = split_as_char_ranges(&text).collect::<Vec<_>>();
 
         assert_eq!(
-            result.iter().map(|x| x.extract(text)).collect::<Vec<_>>(),
+            result.iter()
+                .map(|x| x.extract(text))
+                .collect::<Vec<_>>(),
             vec![
-                " ", "你", "好", "世", "界", ",", " ", "h", "e", "l", "l", "o", " ", "w", "o", "r",
-                "l", "d", " ",
+                " ",
+                "你",
+                "好",
+                "世",
+                "界",
+                ",",
+                " ",
+                "h",
+                "e",
+                "l",
+                "l",
+                "o",
+                " ",
+                "w",
+                "o",
+                "r",
+                "l",
+                "d",
+                " ",
             ]
         );
     }

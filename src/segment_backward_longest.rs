@@ -1,12 +1,23 @@
-use super::{utils::split_as_char_ranges, BackwardDictionary, Match, TextRange};
+use super::{
+    BackwardDictionary,
+    Match,
+    TextRange,
+    BehaviorForUnmatched,
+    utils::split_as_char_ranges,
+};
 
 // 待generator稳定, 改为generator, 以便返回Iterator.
-pub fn segment_backward_longest(
-    text: &str,
+pub fn segment_backward_longest<T: AsRef<str>>(
+    text: T,
     dict: &BackwardDictionary,
-    ignore_unmatched_chars: bool,
+    behavior_for_unmatched: BehaviorForUnmatched,
 ) -> Vec<Match> {
-    let text = text.to_lowercase().chars().rev().collect::<String>();
+    let text = text
+        .as_ref()
+        .to_lowercase()
+        .chars()
+        .rev()
+        .collect::<String>();
 
     let mut results: Vec<Match> = vec![];
 
@@ -24,21 +35,41 @@ pub fn segment_backward_longest(
                             text.len() - real_mat_end_index,
                             text.len() - real_mat_start_index,
                         ),
-                        dict.value_to_tf_idf.get(mat.value()).map(|x| *x),
+                        dict.value_to_tf_idf
+                            .get(mat.value())
+                            .map(|x| *x),
                     );
 
-                    if !ignore_unmatched_chars {
-                        for range in
-                            split_as_char_ranges(&text[start_index..start_index + mat.start()])
-                        {
-                            let result = Match::new(
-                                TextRange::new(
-                                    text.len() - (start_index + range.end_index),
-                                    text.len() - (start_index + range.start_index),
-                                ),
-                                None,
-                            );
-                            results.insert(0, result);
+                    if mat.start() > 0 {
+                        // 处理匹配结果之前的文本
+                        match behavior_for_unmatched {
+                            BehaviorForUnmatched::Ignore => {},
+                            BehaviorForUnmatched::KeepAsWords => {
+                                results.insert(
+                                    0,
+                                    Match::new(
+                                        TextRange::new(
+                                            text.len() - (start_index + mat.start()),
+                                            text.len() - start_index,
+                                        ),
+                                        None,
+                                    )
+                                );
+                            },
+                            BehaviorForUnmatched::KeepAsChars => {
+                                for range in split_as_char_ranges(
+                                    &text[start_index..start_index + mat.start()]
+                                ) {
+                                    let result = Match::new(
+                                        TextRange::new(
+                                            text.len() - (start_index + range.end_index),
+                                            text.len() - (start_index + range.start_index),
+                                        ),
+                                        None,
+                                    );
+                                    results.insert(0, result);
+                                }
+                            },
                         }
                     }
 
@@ -47,17 +78,35 @@ pub fn segment_backward_longest(
                     results.insert(0, result);
                 }
                 None => {
-                    if !ignore_unmatched_chars {
-                        for range in split_as_char_ranges(&text[start_index..]) {
-                            let result = Match::new(
-                                TextRange::new(
-                                    text.len() - (start_index + range.end_index),
-                                    text.len() - (start_index + range.start_index),
+                    // 处理text剩余的文本
+                    match behavior_for_unmatched {
+                        BehaviorForUnmatched::Ignore => {},
+                        BehaviorForUnmatched::KeepAsWords => {
+                            results.insert(
+                                0,
+                                Match::new(
+                                    TextRange::new(
+                                        0,
+                                        text.len() - start_index
+                                    ),
+                                    None,
                                 ),
-                                None,
                             );
-                            results.insert(0, result);
-                        }
+                        },
+                        BehaviorForUnmatched::KeepAsChars => {
+                            for range in split_as_char_ranges(
+                                &text[start_index..]
+                            ) {
+                                let result = Match::new(
+                                    TextRange::new(
+                                        text.len() - (start_index + range.end_index),
+                                        text.len() - (start_index + range.start_index),
+                                    ),
+                                    None,
+                                );
+                                results.insert(0, result);
+                            }
+                        },
                     }
 
                     start_index += 1;
@@ -73,14 +122,24 @@ pub fn segment_backward_longest(
 
 #[cfg(test)]
 mod tests {
-    use super::{segment_backward_longest, BackwardDictionary};
+    use super::{
+        segment_backward_longest,
+        BackwardDictionary,
+        BehaviorForUnmatched
+    };
 
     #[test]
-    fn test_ignore_unmatched_chars() {
+    fn test_ignore_unmatched() {
         let text = " 商品和服务, hello world ";
-        let dict = BackwardDictionary::new(vec!["商品", "和服", "服务", "你好世界"]);
+        let dict = BackwardDictionary::new(
+            vec!["商品", "和服", "服务", "你好世界"]
+        );
 
-        let result = segment_backward_longest(text, &dict, true);
+        let result = segment_backward_longest(
+            text,
+            &dict,
+            BehaviorForUnmatched::Ignore
+        );
 
         assert_eq!(
             result
@@ -92,11 +151,17 @@ mod tests {
     }
 
     #[test]
-    fn test_keep_unmatched_chars() {
+    fn test_keep_unmatched_as_chars() {
         let text = " 商品和服务, hello world ";
-        let dict = BackwardDictionary::new(vec!["商品", "和服", "服务", "你好世界"]);
+        let dict = BackwardDictionary::new(
+            vec!["商品", "和服", "服务", "你好世界"]
+        );
 
-        let result = segment_backward_longest(text, &dict, false);
+        let result = segment_backward_longest(
+            text,
+            &dict,
+            BehaviorForUnmatched::KeepAsChars
+        );
 
         assert_eq!(
             result
@@ -104,8 +169,52 @@ mod tests {
                 .map(|x| x.range.extract(text))
                 .collect::<Vec<_>>(),
             vec![
-                " ", "商品", "和", "服务", ",", " ", "h", "e", "l", "l", "o", " ", "w", "o", "r",
-                "l", "d", " ",
+                " ",
+                "商品",
+                "和",
+                "服务",
+                ",",
+                " ",
+                "h",
+                "e",
+                "l",
+                "l",
+                "o",
+                " ",
+                "w",
+                "o",
+                "r",
+                "l",
+                "d",
+                " ",
+            ]
+        );
+    }
+
+    #[test]
+    fn test_keep_unmatched_as_words() {
+        let text = " 商品和服务, hello world ";
+        let dict = BackwardDictionary::new(
+            vec!["商品", "和服", "服务", "你好世界"]
+        );
+
+        let result = segment_backward_longest(
+            text,
+            &dict,
+            BehaviorForUnmatched::KeepAsWords
+        );
+
+        assert_eq!(
+            result
+                .iter()
+                .map(|x| x.range.extract(text))
+                .collect::<Vec<_>>(),
+            vec![
+                " ",
+                "商品",
+                "和",
+                "服务",
+                ", hello world ",
             ]
         );
     }
@@ -113,17 +222,26 @@ mod tests {
     #[test]
     fn test_tf_idf() {
         let text = " 商品和服务, hello world ";
-        let dict = BackwardDictionary::new_with_tf_idf(vec![
-            ("商品", 0f64),
-            ("和服", 1f64),
-            ("服务", 2f64),
-            ("你好世界", 3f64),
-        ]);
+        let dict = BackwardDictionary::new_with_tf_idf(
+            vec![
+                ("商品", 0f64),
+                ("和服", 1f64),
+                ("服务", 2f64),
+                ("你好世界", 3f64),
+            ]
+        );
 
-        let result = segment_backward_longest(text, &dict, true);
+        let result = segment_backward_longest(
+            text,
+            &dict,
+            BehaviorForUnmatched::Ignore
+        );
 
         assert_eq!(
-            result.iter().map(|x| x.tf_idf.unwrap()).collect::<Vec<_>>(),
+            result
+                .iter()
+                .map(|x| x.tf_idf.unwrap())
+                .collect::<Vec<_>>(),
             vec![0f64, 2f64]
         );
     }

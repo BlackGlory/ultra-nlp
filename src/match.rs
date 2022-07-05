@@ -1,6 +1,6 @@
 use super::TextRange;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Match {
     pub range: TextRange,
     pub tf_idf: Option<f64>,

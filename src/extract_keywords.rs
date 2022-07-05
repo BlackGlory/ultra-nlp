@@ -9,7 +9,10 @@ pub fn extract_keywords(matches: &Vec<Match>, top: usize) -> Vec<Match> {
         b.partial_cmp(&a).unwrap()
     });
 
-    let result = matches.into_iter().take(top).collect::<Vec<_>>();
+    let result = matches
+        .into_iter()
+        .take(top)
+        .collect::<Vec<_>>();
 
     result
 }
@@ -37,7 +40,13 @@ mod tests {
 
         let result = extract_keywords(&matches, top);
 
-        assert_eq!(result, vec![matches[2].clone(), matches[1].clone()]);
+        assert_eq!(
+            result,
+            vec![
+                matches[2].clone(),
+                matches[1].clone()
+            ]
+        );
     }
 
     #[test]
@@ -53,7 +62,11 @@ mod tests {
 
         assert_eq!(
             result,
-            vec![matches[2].clone(), matches[1].clone(), matches[0].clone()]
+            vec![
+                matches[2].clone(),
+                matches[1].clone(),
+                matches[0].clone()
+            ]
         )
     }
 }
