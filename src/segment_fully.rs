@@ -85,8 +85,8 @@ pub fn segment_fully<T: AsRef<str>>(
                         ) {
                             let result = Match::new(
                                 TextRange::new(
-                                    last_match_end_index + range.start_index,
-                                    last_match_end_index + range.end_index,
+                                    last_match_end_index + range.start_index(),
+                                    last_match_end_index + range.end_index(),
                                 ),
                                 None,
                             );
@@ -126,7 +126,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.range.extract(text))
+                .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec!["南京", "南京市", "市长", "长江", "大桥"]
         );
@@ -148,7 +148,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.range.extract(text))
+                .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec![
                 " ",
@@ -191,7 +191,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.range.extract(text))
+                .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec![
                 " ",
@@ -228,7 +228,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.tf_idf.unwrap())
+                .map(|x| x.tf_idf().unwrap())
                 .collect::<Vec<_>>(),
             vec![
                 0f64,

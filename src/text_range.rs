@@ -1,7 +1,7 @@
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct TextRange {
-    pub start_index: usize,
-    pub end_index: usize,
+    start_index: usize,
+    end_index: usize,
 }
 
 impl TextRange {
@@ -10,6 +10,14 @@ impl TextRange {
             start_index,
             end_index,
         }
+    }
+
+    pub fn start_index(&self) -> usize {
+        self.start_index
+    }
+
+    pub fn end_index(&self) -> usize {
+        self.end_index
     }
 
     pub fn len(&self) -> usize {

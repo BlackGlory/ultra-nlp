@@ -3,8 +3,8 @@ use crate::Match;
 pub fn extract_keywords(matches: &Vec<Match>, top: usize) -> Vec<Match> {
     let mut matches = matches.clone();
     matches.sort_unstable_by(|a, b| {
-        let a = normalize_tf_idf(a.tf_idf);
-        let b: f64 = normalize_tf_idf(b.tf_idf);
+        let a = normalize_tf_idf(a.tf_idf());
+        let b: f64 = normalize_tf_idf(b.tf_idf());
         // 直接控制排序, 节约掉事后reverse的时间
         b.partial_cmp(&a).unwrap()
     });

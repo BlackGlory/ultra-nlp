@@ -6,20 +6,20 @@ use daachorse::MatchKind;
 
 #[derive(Clone)]
 pub struct StandardDictionary {
-    pub acdat: DoubleArrayAhoCorasick,
-    pub value_to_tf_idf: Vec<f64>,
+    pub(crate) acdat: DoubleArrayAhoCorasick,
+    pub(crate) value_to_tf_idf: Vec<f64>,
 }
 
 #[derive(Clone)]
 pub struct ForwardDictionary {
-    pub acdat: DoubleArrayAhoCorasick,
-    pub value_to_tf_idf: Vec<f64>,
+    pub(crate) acdat: DoubleArrayAhoCorasick,
+    pub(crate) value_to_tf_idf: Vec<f64>,
 }
 
 #[derive(Clone)]
 pub struct BackwardDictionary {
-    pub acdat: DoubleArrayAhoCorasick,
-    pub value_to_tf_idf: Vec<f64>,
+    pub(crate) acdat: DoubleArrayAhoCorasick,
+    pub(crate) value_to_tf_idf: Vec<f64>,
 }
 
 impl StandardDictionary {

@@ -54,7 +54,7 @@ fn count_single_chars<T: AsRef<str>>(
     let mut result = 0;
 
     for mat in results {
-        if mat.range.extract(text.as_ref()).chars().count() == 1 {
+        if mat.range().extract(text.as_ref()).chars().count() == 1 {
             result += 1;
         }
     }
@@ -100,7 +100,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.range.extract(text))
+                .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec!["当下", "雨天", "地面", "积水"]
         )
@@ -126,7 +126,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.range.extract(text))
+                .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec!["商品", "服务",]
         )
@@ -149,7 +149,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.range.extract(text))
+                .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec!["商品", "服务",]
         )
@@ -172,7 +172,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.range.extract(text))
+                .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec![
                 " ",
@@ -223,7 +223,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.range.extract(text))
+                .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec![" ", "当下", "雨天", "地面", "积水", ", hello world "]
         )
@@ -258,7 +258,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.tf_idf.unwrap())
+                .map(|x| x.tf_idf().unwrap())
                 .collect::<Vec<_>>(),
             vec![1f64, 4f64, 5f64, 6f64]
         )

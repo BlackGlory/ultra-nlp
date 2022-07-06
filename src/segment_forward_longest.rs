@@ -51,8 +51,8 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                                 ) {
                                     let result = Match::new(
                                         TextRange::new(
-                                            start_index + range.start_index,
-                                            start_index + range.end_index,
+                                            start_index + range.start_index(),
+                                            start_index + range.end_index(),
                                         ),
                                         None,
                                     );
@@ -87,8 +87,8 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                             ) {
                                 let result = Match::new(
                                     TextRange::new(
-                                        start_index + range.start_index,
-                                        start_index + range.end_index,
+                                        start_index + range.start_index(),
+                                        start_index + range.end_index(),
                                     ),
                                     None,
                                 );
@@ -132,7 +132,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.range.extract(text))
+                .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec!["商品", "和服",]
         );
@@ -154,7 +154,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.range.extract(text))
+                .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec![
                 " ",
@@ -195,7 +195,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.range.extract(text))
+                .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec![
                 " ",
@@ -227,7 +227,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.tf_idf.unwrap())
+                .map(|x| x.tf_idf().unwrap())
                 .collect::<Vec<_>>(),
             vec![0f64, 1f64]
         );
