@@ -18,7 +18,7 @@ let result = segment_fully(text, &dict, BehaviorForUnmatched::Ignore);
 assert_eq!(
     result
         .iter()
-        .map(|x| x.range.extract(text))
+        .map(|x| x.range().extract(text))
         .collect::<Vec<_>>(),
     vec![
       "南京",
@@ -47,7 +47,7 @@ let result = segment_fully(text, &dict, BehaviorForUnmatched::KeepAsChars);
 assert_eq!(
     result
         .iter()
-        .map(|x| x.range.extract(text))
+        .map(|x| x.range().extract(text))
         .collect::<Vec<_>>(),
     vec![
         " ",
@@ -91,7 +91,7 @@ let result = segment_fully(text, &dict, BehaviorForUnmatched::KeepAsWords);
 assert_eq!(
     result
         .iter()
-        .map(|x| x.range.extract(text))
+        .map(|x| x.range().extract(text))
         .collect::<Vec<_>>(),
     vec![
         " ",
