@@ -3,6 +3,10 @@ use daachorse::charwise::{
     CharwiseDoubleArrayAhoCorasickBuilder as DoubleArrayAhoCorasickBuilder,
 };
 use daachorse::MatchKind;
+use crate::{
+    UltraNLPResult,
+    UltraNLPError
+};
 
 #[derive(Clone)]
 pub struct StandardDictionary {
@@ -23,24 +27,26 @@ pub struct BackwardDictionary {
 }
 
 impl StandardDictionary {
-    pub fn new<T: AsRef<str>, I: IntoIterator<Item = T>>(patterns: I) -> Self {
+    pub fn new<T: AsRef<str>, I: IntoIterator<Item = T>>(
+        patterns: I
+    ) -> UltraNLPResult<Self> {
         let patterns = process_patterns(patterns);
 
         let acdat = create_acdat(
             patterns,
             MatchKind::Standard
-        );
+        )?;
 
-        Self {
+        Ok(Self {
             acdat,
             value_to_tf_idf: vec![],
-        }
+        })
     }
 
     pub fn new_with_tf_idf<
         T: AsRef<str>,
         I: IntoIterator<Item = (T, f64)>
-    >(patterns_with_tf_idf: I) -> Self {
+    >(patterns_with_tf_idf: I) -> UltraNLPResult<Self> {
         let (
             patterns_with_values,
             value_to_tf_idf
@@ -49,36 +55,36 @@ impl StandardDictionary {
         let acdat = create_acdat_with_values(
             patterns_with_values,
             MatchKind::Standard
-        );
+        )?;
 
-        Self {
+        Ok(Self {
             acdat,
             value_to_tf_idf,
-        }
+        })
     }
 }
 
 impl ForwardDictionary {
     pub fn new<T: AsRef<str>, I: IntoIterator<Item = T>>(
         patterns: I
-    ) -> Self {
+    ) -> UltraNLPResult<Self> {
         let patterns = process_patterns(patterns);
 
         let acdat = create_acdat(
             patterns,
             MatchKind::LeftmostLongest
-        );
+        )?;
 
-        Self {
+        Ok(Self {
             acdat,
             value_to_tf_idf: vec![],
-        }
+        })
     }
 
     pub fn new_with_tf_idf<
         T: AsRef<str>,
         I: IntoIterator<Item = (T, f64)>
-    >(patterns_with_tf_idf: I) -> Self {
+    >(patterns_with_tf_idf: I) -> UltraNLPResult<Self> {
         let (
             patterns_with_values,
             value_to_tf_idf
@@ -87,19 +93,19 @@ impl ForwardDictionary {
         let acdat = create_acdat_with_values(
             patterns_with_values,
             MatchKind::LeftmostLongest
-        );
+        )?;
 
-        Self {
+        Ok(Self {
             acdat,
             value_to_tf_idf,
-        }
+        })
     }
 }
 
 impl BackwardDictionary {
     pub fn new<T: AsRef<str>, I: IntoIterator<Item = T>>(
         patterns: I
-    ) -> Self {
+    ) -> UltraNLPResult<Self> {
         let reversed_patterns = process_patterns(patterns)
             .into_iter()
             .map(|x| x
@@ -112,18 +118,18 @@ impl BackwardDictionary {
         let acdat = create_acdat(
             reversed_patterns,
             MatchKind::LeftmostLongest
-        );
+        )?;
 
-        Self {
+        Ok(Self {
             acdat,
             value_to_tf_idf: vec![],
-        }
+        })
     }
 
     pub fn new_with_tf_idf<
         T: AsRef<str>,
         I: IntoIterator<Item = (T, f64)>
-    >(patterns_with_tf_idf: I) -> Self {
+    >(patterns_with_tf_idf: I) -> UltraNLPResult<Self> {
         let (
             patterns_with_values,
             value_to_tf_idf
@@ -144,25 +150,24 @@ impl BackwardDictionary {
         let acdat = create_acdat_with_values(
             patterns_with_values,
             MatchKind::LeftmostLongest
-        );
+        )?;
 
-        Self {
+        Ok(Self {
             acdat,
             value_to_tf_idf,
-        }
+        })
     }
 }
 
 fn create_acdat<T: AsRef<str>, I: IntoIterator<Item = T>>(
     patterns: I,
     match_kind: MatchKind,
-) -> DoubleArrayAhoCorasick {
+) -> UltraNLPResult<DoubleArrayAhoCorasick> {
     let acdat = DoubleArrayAhoCorasickBuilder::new()
         .match_kind(match_kind)
-        .build(patterns)
-        .unwrap();
+        .build(patterns);
 
-    acdat
+    acdat.map_err(|err| UltraNLPError::new(err.to_string()))
 }
 
 fn create_acdat_with_values<
@@ -171,13 +176,12 @@ fn create_acdat_with_values<
 >(
     patterns_with_values: I,
     match_kind: MatchKind,
-) -> DoubleArrayAhoCorasick {
+) -> UltraNLPResult<DoubleArrayAhoCorasick> {
     let acdat = DoubleArrayAhoCorasickBuilder::new()
         .match_kind(match_kind)
-        .build_with_values(patterns_with_values)
-        .unwrap();
+        .build_with_values(patterns_with_values);
 
-    acdat
+    acdat.map_err(|err| UltraNLPError::new(err.to_string()))
 }
 
 fn process_patterns<
@@ -213,4 +217,70 @@ fn process_patterns_with_tf_idf<
         .collect();
 
     (patterns, value_to_tf_idf)
+}
+
+#[cfg(test)]
+mod tests {
+    mod standard_dictionary {
+        use crate::StandardDictionary;
+
+        #[test]
+        fn test_empty_patterns() {
+            let patterns: Vec<&str> = vec![];
+
+            assert_eq!(
+                StandardDictionary::new(patterns).is_err(),
+                true
+            );
+        }
+
+        #[test]
+        fn test_patterns() {
+            let patterns: Vec<&str> = vec!["foo", "bar"];
+
+            StandardDictionary::new(patterns).unwrap();
+        }
+    }
+
+    mod forward_dictionary {
+        use crate::ForwardDictionary;
+
+        #[test]
+        fn test_empty_patterns() {
+            let patterns: Vec<&str> = vec![];
+
+            assert_eq!(
+                ForwardDictionary::new(patterns).is_err(),
+                true
+            );
+        }
+
+        #[test]
+        fn test_patterns() {
+            let patterns: Vec<&str> = vec!["foo", "bar"];
+
+            ForwardDictionary::new(patterns).unwrap();
+        }
+    }
+
+    mod backward_dictionary {
+        use crate::BackwardDictionary;
+
+        #[test]
+        fn test_empty_patterns() {
+            let patterns: Vec<&str> = vec![];
+
+            assert_eq!(
+                BackwardDictionary::new(patterns).is_err(),
+                true
+            );
+        }
+
+        #[test]
+        fn test_patterns() {
+            let patterns: Vec<&str> = vec!["foo", "bar"];
+
+            BackwardDictionary::new(patterns).unwrap();
+        }
+    }
 }

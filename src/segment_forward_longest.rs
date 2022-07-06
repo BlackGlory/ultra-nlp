@@ -121,7 +121,7 @@ mod tests {
         let text = " 商品和服务, hello world ";
         let dict = ForwardDictionary::new(
             vec!["商品", "和服", "服务", "你好世界"]
-        );
+        ).unwrap();
 
         let result = segment_forward_longest(
             text,
@@ -143,7 +143,7 @@ mod tests {
         let text = " 商品和服务, hello world ";
         let dict = ForwardDictionary::new(
             vec!["商品", "和服", "服务", "你好世界"]
-        );
+        ).unwrap();
 
         let result = segment_forward_longest(
             text,
@@ -184,7 +184,7 @@ mod tests {
         let text = " 商品和服务, hello world ";
         let dict = ForwardDictionary::new(
             vec!["商品", "和服", "服务", "你好世界"]
-        );
+        ).unwrap();
 
         let result = segment_forward_longest(
             text,
@@ -216,7 +216,7 @@ mod tests {
                 ("服务", 2f64),
                 ("你好世界", 3f64),
             ]
-        );
+        ).unwrap();
 
         let result = segment_forward_longest(
             text,

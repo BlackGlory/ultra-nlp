@@ -11,7 +11,7 @@ use ultra_nlp::{
 let text = " 南京市长江大桥, hello world ";
 let dict = StandardDictionary::new(
     vec!["南京", "南京市", "市长", "长江", "大桥", "你好世界"]
-);
+).unwrap();
 
 let result = segment_fully(text, &dict, BehaviorForUnmatched::Ignore);
 
@@ -39,8 +39,9 @@ use ultra_nlp::{
 };
 
 let text = " 南京市长江大桥, hello world ";
-let dict =
-    StandardDictionary::new(vec!["南京", "南京市", "市长", "长江", "大桥", "你好世界"]);
+let dict = StandardDictionary::new(
+    vec!["南京", "南京市", "市长", "长江", "大桥", "你好世界"]
+).unwrap();
 
 let result = segment_fully(text, &dict, BehaviorForUnmatched::KeepAsChars);
 
@@ -83,8 +84,9 @@ use ultra_nlp::{
 };
 
 let text = " 南京市长江大桥, hello world ";
-let dict =
-    StandardDictionary::new(vec!["南京", "南京市", "市长", "长江", "大桥", "你好世界"]);
+let dict = StandardDictionary::new(
+    vec!["南京", "南京市", "市长", "长江", "大桥", "你好世界"]
+).unwrap();
 
 let result = segment_fully(text, &dict, BehaviorForUnmatched::KeepAsWords);
 

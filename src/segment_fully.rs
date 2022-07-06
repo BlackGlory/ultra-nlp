@@ -115,7 +115,7 @@ mod tests {
         let text = " 南京市长江大桥, hello world ";
         let dict = StandardDictionary::new(
             vec!["南京", "南京市", "市长", "长江", "大桥", "你好世界"]
-        );
+        ).unwrap();
 
         let result = segment_fully(
             text,
@@ -137,7 +137,7 @@ mod tests {
         let text = " 南京市长江大桥, hello world ";
         let dict = StandardDictionary::new(
             vec!["南京", "南京市", "市长", "长江", "大桥", "你好世界"]
-        );
+        ).unwrap();
 
         let result = segment_fully(
             text,
@@ -180,7 +180,7 @@ mod tests {
         let text = " 南京市长江大桥, hello world ";
         let dict = StandardDictionary::new(
             vec!["南京", "南京市", "市长", "长江", "大桥", "你好世界"]
-        );
+        ).unwrap();
 
         let result = segment_fully(
             text,
@@ -217,7 +217,7 @@ mod tests {
                 ("大桥", 4f64),
                 ("你好世界", 5f64),
             ]
-        );
+        ).unwrap();
 
         let result = segment_fully(
             text,

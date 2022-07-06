@@ -133,7 +133,7 @@ mod tests {
         let text = " 商品和服务, hello world ";
         let dict = BackwardDictionary::new(
             vec!["商品", "和服", "服务", "你好世界"]
-        );
+        ).unwrap();
 
         let result = segment_backward_longest(
             text,
@@ -155,7 +155,7 @@ mod tests {
         let text = " 商品和服务, hello world ";
         let dict = BackwardDictionary::new(
             vec!["商品", "和服", "服务", "你好世界"]
-        );
+        ).unwrap();
 
         let result = segment_backward_longest(
             text,
@@ -196,7 +196,7 @@ mod tests {
         let text = " 商品和服务, hello world ";
         let dict = BackwardDictionary::new(
             vec!["商品", "和服", "服务", "你好世界"]
-        );
+        ).unwrap();
 
         let result = segment_backward_longest(
             text,
@@ -229,7 +229,7 @@ mod tests {
                 ("服务", 2f64),
                 ("你好世界", 3f64),
             ]
-        );
+        ).unwrap();
 
         let result = segment_backward_longest(
             text,
