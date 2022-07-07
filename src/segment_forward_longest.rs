@@ -27,7 +27,7 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                     let result = Match::new(
                         TextRange::new(real_mat_start_index, real_mat_end_index),
                         dict.value_to_tf_idf
-                            .get(mat.value())
+                            .get(mat.value() as usize)
                             .map(|x| *x),
                     );
 

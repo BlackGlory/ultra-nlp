@@ -36,7 +36,7 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                             text.len() - real_mat_start_index,
                         ),
                         dict.value_to_tf_idf
-                            .get(mat.value())
+                            .get(mat.value() as usize)
                             .map(|x| *x),
                     );
 

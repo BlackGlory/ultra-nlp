@@ -22,7 +22,7 @@ pub fn segment_fully<T: AsRef<str>>(
                     Match::new(
                         TextRange::new(mat.start(), mat.end()),
                         dict.value_to_tf_idf
-                            .get(mat.value())
+                            .get(mat.value() as usize)
                             .map(|x| *x),
                     )
                 })
@@ -65,7 +65,7 @@ pub fn segment_fully<T: AsRef<str>>(
                 let result = Match::new(
                     TextRange::new(mat.start(), mat.end()),
                     dict.value_to_tf_idf
-                        .get(mat.value())
+                        .get(mat.value() as usize)
                         .map(|x| *x),
                 );
                 results.push(result);

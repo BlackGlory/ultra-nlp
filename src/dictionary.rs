@@ -10,19 +10,19 @@ use crate::{
 
 #[derive(Clone)]
 pub struct StandardDictionary {
-    pub(crate) acdat: DoubleArrayAhoCorasick,
+    pub(crate) acdat: DoubleArrayAhoCorasick<u32>,
     pub(crate) value_to_tf_idf: Vec<f64>,
 }
 
 #[derive(Clone)]
 pub struct ForwardDictionary {
-    pub(crate) acdat: DoubleArrayAhoCorasick,
+    pub(crate) acdat: DoubleArrayAhoCorasick<u32>,
     pub(crate) value_to_tf_idf: Vec<f64>,
 }
 
 #[derive(Clone)]
 pub struct BackwardDictionary {
-    pub(crate) acdat: DoubleArrayAhoCorasick,
+    pub(crate) acdat: DoubleArrayAhoCorasick<u32>,
     pub(crate) value_to_tf_idf: Vec<f64>,
 }
 
@@ -162,7 +162,7 @@ impl BackwardDictionary {
 fn create_acdat<T: AsRef<str>, I: IntoIterator<Item = T>>(
     patterns: I,
     match_kind: MatchKind,
-) -> UltraNLPResult<DoubleArrayAhoCorasick> {
+) -> UltraNLPResult<DoubleArrayAhoCorasick<u32>> {
     let acdat = DoubleArrayAhoCorasickBuilder::new()
         .match_kind(match_kind)
         .build(patterns);
@@ -176,7 +176,7 @@ fn create_acdat_with_values<
 >(
     patterns_with_values: I,
     match_kind: MatchKind,
-) -> UltraNLPResult<DoubleArrayAhoCorasick> {
+) -> UltraNLPResult<DoubleArrayAhoCorasick<u32>> {
     let acdat = DoubleArrayAhoCorasickBuilder::new()
         .match_kind(match_kind)
         .build_with_values(patterns_with_values);
