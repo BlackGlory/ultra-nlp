@@ -50,7 +50,7 @@ impl StandardDictionary {
         let (
             patterns_with_values,
             value_to_tf_idf
-        ) = process_patterns_with_tf_idf(patterns_with_tf_idf);
+        ) = process_patterns_with_tf_idf(patterns_with_tf_idf)?;
 
         let acdat = create_acdat_with_values(
             patterns_with_values,
@@ -88,7 +88,7 @@ impl ForwardDictionary {
         let (
             patterns_with_values,
             value_to_tf_idf
-        ) = process_patterns_with_tf_idf(patterns_with_tf_idf);
+        ) = process_patterns_with_tf_idf(patterns_with_tf_idf)?;
 
         let acdat = create_acdat_with_values(
             patterns_with_values,
@@ -133,7 +133,7 @@ impl BackwardDictionary {
         let (
             patterns_with_values,
             value_to_tf_idf
-        ) = process_patterns_with_tf_idf(patterns_with_tf_idf);
+        ) = process_patterns_with_tf_idf(patterns_with_tf_idf)?;
 
         let patterns_with_values = patterns_with_values
             .into_iter()
@@ -201,22 +201,22 @@ fn process_patterns_with_tf_idf<
     I: IntoIterator<Item = (T, f64)>
 >(
     patterns_with_tf_idf: I,
-) -> (Vec<(String, u32)>, Vec<f64>) {
+) -> UltraNLPResult<(Vec<(String, u32)>, Vec<f64>)> {
     let mut value_to_tf_idf: Vec<f64> = vec![];
     let patterns = patterns_with_tf_idf
         .into_iter()
-        .map(|(word, tf_idf)| {
+        .map(|(word, tf_idf)| -> Result<(String, u32), _>{
             let word = word.as_ref().to_lowercase();
 
             value_to_tf_idf.push(tf_idf);
-            // 待TryFrom的实现稳定, 改为使用try_from, 以便在转换失败时panic.
-            let value = (value_to_tf_idf.len() - 1) as u32;
+            let value = u32::try_from(value_to_tf_idf.len() - 1)
+                .map_err(|err| UltraNLPError::new(err.to_string()))?;
 
-            (word, value)
+            Ok((word, value))
         })
-        .collect();
+        .collect::<Result<Vec<_>, _>>()?;
 
-    (patterns, value_to_tf_idf)
+    Ok((patterns, value_to_tf_idf))
 }
 
 #[cfg(test)]
