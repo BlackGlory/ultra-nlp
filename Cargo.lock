@@ -10,7 +10,7 @@ checksum = "9dee1cd6e1f1e56a73c6f35106a670659a0aaefac2c27f4771263a52971b9a1c"
 
 [[package]]
 name = "ultra-nlp"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "daachorse",
 ]
