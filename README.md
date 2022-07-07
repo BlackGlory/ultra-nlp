@@ -1,11 +1,12 @@
 # ultra-nlp
 ## Usage
-### Ignore unmatched contents
+### daachorse
+#### Ignore unmatched contents
 ```rs
-use ultra_nlp::{
+use ultra_nlp::BehaviorForUnmatched,
+use ultra_nlp::daachorse::{
     segment_fully,
     StandardDictionary,
-    BehaviorForUnmatched,
 };
 
 let text = " 南京市长江大桥, hello world ";
@@ -30,12 +31,12 @@ assert_eq!(
 );
 ```
 
-### Keep unmatched contents as chars
+#### Keep unmatched contents as chars
 ```rs
-use ultra_nlp::{
+use ultra_nlp::BehaviorForUnmatched,
+use ultra_nlp::daachorse::{
     segment_fully,
     StandardDictionary,
-    BehaviorForUnmatched,
 };
 
 let text = " 南京市长江大桥, hello world ";
@@ -75,12 +76,12 @@ assert_eq!(
 );
 ```
 
-### Keep unmatched contents as words
+#### Keep unmatched contents as words
 ```rs
-use ultra_nlp::{
+use ultra_nlp::BehaviorForUnmatched,
+use ultra_nlp::daachorse::{
     segment_fully,
     StandardDictionary,
-    BehaviorForUnmatched,
 };
 
 let text = " 南京市长江大桥, hello world ";

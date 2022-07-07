@@ -1,10 +1,10 @@
 use crate::{
     Match,
-    StandardDictionary,
     TextRange,
     BehaviorForUnmatched,
     utils::split_as_char_ranges,
 };
+use crate::daachorse::StandardDictionary;
 
 // 待generator稳定, 改为generator, 以便返回Iterator.
 pub fn segment_fully<T: AsRef<str>>(
@@ -104,10 +104,10 @@ pub fn segment_fully<T: AsRef<str>>(
 
 #[cfg(test)]
 mod tests {
-    use crate::{
+    use crate::BehaviorForUnmatched;
+    use crate::daachorse::{
         segment_fully,
         StandardDictionary,
-        BehaviorForUnmatched,
     };
 
     #[test]

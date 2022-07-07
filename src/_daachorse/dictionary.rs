@@ -222,7 +222,7 @@ fn process_patterns_with_tf_idf<
 #[cfg(test)]
 mod tests {
     mod standard_dictionary {
-        use crate::StandardDictionary;
+        use crate::daachorse::StandardDictionary;
 
         #[test]
         fn test_empty_patterns() {
@@ -243,7 +243,7 @@ mod tests {
     }
 
     mod forward_dictionary {
-        use crate::ForwardDictionary;
+        use crate::daachorse::ForwardDictionary;
 
         #[test]
         fn test_empty_patterns() {
@@ -264,7 +264,7 @@ mod tests {
     }
 
     mod backward_dictionary {
-        use crate::BackwardDictionary;
+        use crate::daachorse::BackwardDictionary;
 
         #[test]
         fn test_empty_patterns() {

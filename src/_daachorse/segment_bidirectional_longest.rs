@@ -1,10 +1,12 @@
 use crate::{
+    BehaviorForUnmatched,
+    Match,
+};
+use crate::daachorse::{
     segment_backward_longest,
     segment_forward_longest,
     BackwardDictionary,
     ForwardDictionary,
-    BehaviorForUnmatched,
-    Match,
 };
 
 // 待generator稳定, 改为generator, 以便返回Iterator.
@@ -64,11 +66,11 @@ fn count_single_chars<T: AsRef<str>>(
 
 #[cfg(test)]
 mod tests {
-    use crate::{
+    use crate::BehaviorForUnmatched;
+    use crate::daachorse::{
         segment_bidirectional_longest,
         BackwardDictionary,
         ForwardDictionary,
-        BehaviorForUnmatched,
     };
 
     #[test]

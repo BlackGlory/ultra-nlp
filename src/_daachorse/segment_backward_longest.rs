@@ -1,10 +1,10 @@
 use crate::{
-    BackwardDictionary,
     Match,
     TextRange,
     BehaviorForUnmatched,
     utils::split_as_char_ranges,
 };
+use crate::daachorse::BackwardDictionary;
 
 // 待generator稳定, 改为generator, 以便返回Iterator.
 pub fn segment_backward_longest<T: AsRef<str>>(
@@ -122,10 +122,10 @@ pub fn segment_backward_longest<T: AsRef<str>>(
 
 #[cfg(test)]
 mod tests {
-    use crate::{
+    use crate::BehaviorForUnmatched;
+    use crate::daachorse::{
         segment_backward_longest,
         BackwardDictionary,
-        BehaviorForUnmatched
     };
 
     #[test]
