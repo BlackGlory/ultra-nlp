@@ -10,3 +10,5 @@ repository = "https://github.com/BlackGlory/ultra-nlp"
 
 [dependencies]
 daachorse = "1.0.0-rc.1"
+yada = "0.5.0"
+cedarwood = "0.4.5"

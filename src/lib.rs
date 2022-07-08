@@ -1,4 +1,5 @@
 mod _daachorse;
+mod _cedarwood;
 mod extract_keywords;
 mod r#match;
 mod text_range;
@@ -14,4 +15,8 @@ pub use error::*;
 
 pub mod daachorse {
     pub use crate::_daachorse::*;
+}
+
+pub mod cedarwood {
+    pub use crate::_cedarwood::*;
 }

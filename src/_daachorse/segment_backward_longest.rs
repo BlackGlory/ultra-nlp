@@ -45,16 +45,14 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                         match behavior_for_unmatched {
                             BehaviorForUnmatched::Ignore => {},
                             BehaviorForUnmatched::KeepAsWords => {
-                                results.insert(
-                                    0,
-                                    Match::new(
-                                        TextRange::new(
-                                            text.len() - (start_index + mat.start()),
-                                            text.len() - start_index,
-                                        ),
-                                        None,
-                                    )
+                                let result = Match::new(
+                                    TextRange::new(
+                                        text.len() - (start_index + mat.start()),
+                                        text.len() - start_index,
+                                    ),
+                                    None,
                                 );
+                                results.push(result);
                             },
                             BehaviorForUnmatched::KeepAsChars => {
                                 for range in split_as_char_ranges(
@@ -67,7 +65,7 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                                         ),
                                         None,
                                     );
-                                    results.insert(0, result);
+                                    results.push(result);
                                 }
                             },
                         }
@@ -75,22 +73,21 @@ pub fn segment_backward_longest<T: AsRef<str>>(
 
                     start_index = real_mat_end_index;
 
-                    results.insert(0, result);
+                    results.push(result);
                 }
                 None => {
                     // 处理text剩余的文本
                     match behavior_for_unmatched {
                         BehaviorForUnmatched::Ignore => {},
                         BehaviorForUnmatched::KeepAsWords => {
-                            results.insert(
-                                0,
+                            results.push(
                                 Match::new(
                                     TextRange::new(
                                         0,
                                         text.len() - start_index
                                     ),
                                     None,
-                                ),
+                                )
                             );
                         },
                         BehaviorForUnmatched::KeepAsChars => {
@@ -104,7 +101,7 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                                     ),
                                     None,
                                 );
-                                results.insert(0, result);
+                                results.push(result);
                             }
                         },
                     }
@@ -116,6 +113,8 @@ pub fn segment_backward_longest<T: AsRef<str>>(
             start_index += 1;
         }
     }
+
+    results.reverse();
 
     results
 }

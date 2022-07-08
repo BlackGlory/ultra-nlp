@@ -32,33 +32,34 @@ pub fn segment_fully<T: AsRef<str>>(
         | BehaviorForUnmatched::KeepAsWords => {
             let mut results: Vec<Match> = vec![];
 
-            let mut last_match_end_index = 0;
+            let mut maximum_matched_end_index = 0;
             for mat in dict.acdat.find_overlapping_iter(&text) {
-                if mat.start() > last_match_end_index {
+                if mat.start() > maximum_matched_end_index {
                     // 处理匹配结果之前的文本
                     match behavior_for_unmatched {
                         BehaviorForUnmatched::Ignore => panic!("Rust is stupid."),
                         BehaviorForUnmatched::KeepAsWords => {
                             results.push(
                                 Match::new(
-                                    TextRange::new(last_match_end_index, mat.start()),
+                                    TextRange::new(maximum_matched_end_index, mat.start()),
                                     None
                                 )
                             );
                         },
                         BehaviorForUnmatched::KeepAsChars => {
                             for range in split_as_char_ranges(
-                                &text[last_match_end_index..mat.start()]
+                                &text[maximum_matched_end_index..mat.start()]
                             ) {
                                 results.push(Match::new(range, None));
                             }
                         },
                     }
 
-                    last_match_end_index = mat.end();
+                    // mat.end() > last_match_end_index
+                    maximum_matched_end_index = mat.end();
                 } else {
-                    if mat.end() > last_match_end_index {
-                        last_match_end_index = mat.end();
+                    if mat.end() > maximum_matched_end_index {
+                        maximum_matched_end_index = mat.end();
                     }
                 }
 
@@ -70,23 +71,23 @@ pub fn segment_fully<T: AsRef<str>>(
                 );
                 results.push(result);
             }
-            if last_match_end_index < text.len() {
+            if maximum_matched_end_index < text.len() {
                 // 处理text剩余的文本
                 match behavior_for_unmatched {
                     BehaviorForUnmatched::KeepAsWords => {
                         results.push(Match::new(
-                            TextRange::new(last_match_end_index, text.len()),
+                            TextRange::new(maximum_matched_end_index, text.len()),
                             None
                         ))
                     },
                     BehaviorForUnmatched::KeepAsChars => {
                         for range in split_as_char_ranges(
-                            &text[last_match_end_index..]
+                            &text[maximum_matched_end_index..]
                         ) {
                             let result = Match::new(
                                 TextRange::new(
-                                    last_match_end_index + range.start_index(),
-                                    last_match_end_index + range.end_index(),
+                                    maximum_matched_end_index + range.start_index(),
+                                    maximum_matched_end_index + range.end_index(),
                                 ),
                                 None,
                             );

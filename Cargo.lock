@@ -3,14 +3,37 @@
 version = 3
 
 [[package]]
+name = "cedarwood"
+version = "0.4.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa312498f9f41452998d984d3deb84c84f86aeb8a2499d7505bb8106d78d147d"
+dependencies = [
+ "smallvec",
+]
+
+[[package]]
 name = "daachorse"
 version = "1.0.0-rc.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9dee1cd6e1f1e56a73c6f35106a670659a0aaefac2c27f4771263a52971b9a1c"
 
 [[package]]
+name = "smallvec"
+version = "1.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2fd0db749597d91ff862fd1d55ea87f7855a744a8425a64695b6fca237d1dad1"
+
+[[package]]
 name = "ultra-nlp"
 version = "0.3.1"
 dependencies = [
+ "cedarwood",
  "daachorse",
+ "yada",
 ]
+
+[[package]]
+name = "yada"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6d12cb7a57bbf2ab670ed9545bae3648048547f9039279a89ce000208e585c1"

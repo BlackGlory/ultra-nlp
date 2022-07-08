@@ -30,7 +30,7 @@ impl StandardDictionary {
     pub fn new<T: AsRef<str>, I: IntoIterator<Item = T>>(
         patterns: I
     ) -> UltraNLPResult<Self> {
-        let patterns = process_patterns(patterns);
+        let patterns = prepare_patterns_for_dictionary(patterns);
 
         let acdat = create_acdat(
             patterns,
@@ -50,7 +50,7 @@ impl StandardDictionary {
         let (
             patterns_with_values,
             value_to_tf_idf
-        ) = process_patterns_with_tf_idf(patterns_with_tf_idf)?;
+        ) = prepare_patterns_with_tf_idf_for_dictionary(patterns_with_tf_idf)?;
 
         let acdat = create_acdat_with_values(
             patterns_with_values,
@@ -68,7 +68,7 @@ impl ForwardDictionary {
     pub fn new<T: AsRef<str>, I: IntoIterator<Item = T>>(
         patterns: I
     ) -> UltraNLPResult<Self> {
-        let patterns = process_patterns(patterns);
+        let patterns = prepare_patterns_for_dictionary(patterns);
 
         let acdat = create_acdat(
             patterns,
@@ -88,7 +88,7 @@ impl ForwardDictionary {
         let (
             patterns_with_values,
             value_to_tf_idf
-        ) = process_patterns_with_tf_idf(patterns_with_tf_idf)?;
+        ) = prepare_patterns_with_tf_idf_for_dictionary(patterns_with_tf_idf)?;
 
         let acdat = create_acdat_with_values(
             patterns_with_values,
@@ -106,7 +106,7 @@ impl BackwardDictionary {
     pub fn new<T: AsRef<str>, I: IntoIterator<Item = T>>(
         patterns: I
     ) -> UltraNLPResult<Self> {
-        let reversed_patterns = process_patterns(patterns)
+        let reversed_patterns = prepare_patterns_for_dictionary(patterns)
             .into_iter()
             .map(|x| x
                 .chars()
@@ -133,7 +133,7 @@ impl BackwardDictionary {
         let (
             patterns_with_values,
             value_to_tf_idf
-        ) = process_patterns_with_tf_idf(patterns_with_tf_idf)?;
+        ) = prepare_patterns_with_tf_idf_for_dictionary(patterns_with_tf_idf)?;
 
         let patterns_with_values = patterns_with_values
             .into_iter()
@@ -184,7 +184,7 @@ fn create_acdat_with_values<
     acdat.map_err(|err| UltraNLPError::new(err.to_string()))
 }
 
-fn process_patterns<
+fn prepare_patterns_for_dictionary<
     T: AsRef<str>,
     I: IntoIterator<Item = T>
 >(patterns: I) -> Vec<String> {
@@ -196,7 +196,7 @@ fn process_patterns<
     patterns
 }
 
-fn process_patterns_with_tf_idf<
+fn prepare_patterns_with_tf_idf_for_dictionary<
     T: AsRef<str>,
     I: IntoIterator<Item = (T, f64)>
 >(
@@ -205,14 +205,14 @@ fn process_patterns_with_tf_idf<
     let mut value_to_tf_idf: Vec<f64> = vec![];
     let patterns = patterns_with_tf_idf
         .into_iter()
-        .map(|(word, tf_idf)| -> Result<(String, u32), _>{
-            let word = word.as_ref().to_lowercase();
+        .map(|(pattern, tf_idf)| -> Result<(String, u32), _>{
+            let pattern = pattern.as_ref().to_lowercase();
 
             value_to_tf_idf.push(tf_idf);
             let value = u32::try_from(value_to_tf_idf.len() - 1)
                 .map_err(|err| UltraNLPError::new(err.to_string()))?;
 
-            Ok((word, value))
+            Ok((pattern, value))
         })
         .collect::<Result<Vec<_>, _>>()?;
 
