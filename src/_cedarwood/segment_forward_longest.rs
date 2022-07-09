@@ -6,12 +6,16 @@ use crate::{
 };
 use crate::cedarwood::ForwardDictionary;
 
+// 待generator稳定, 改为generator, 以便返回Iterator.
 pub fn segment_forward_longest<T: AsRef<str>>(
     text: T,
     dict: &ForwardDictionary,
     behavior_for_unmatched: BehaviorForUnmatched,
 ) -> Vec<Match> {
-    let text = text.as_ref().to_lowercase();
+    let text = text
+        .as_ref()
+    .to_lowercase();
+
     let mut results: Vec<Match> = vec![];
 
     let mut unconsumed_word_start_index: Option<usize> = None;

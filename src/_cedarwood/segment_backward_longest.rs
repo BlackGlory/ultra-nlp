@@ -6,6 +6,7 @@ use crate::{
 };
 use crate::cedarwood::BackwardDictionary;
 
+// 待generator稳定, 改为generator, 以便返回Iterator.
 pub fn segment_backward_longest<T: AsRef<str>>(
     text: T,
     dict: &BackwardDictionary,
