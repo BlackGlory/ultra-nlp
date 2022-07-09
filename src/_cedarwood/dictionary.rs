@@ -182,3 +182,42 @@ fn prepare_patterns_with_tf_idf_for_dictionary<
 
     Ok((patterns, value_to_tf_idf))
 }
+
+#[cfg(test)]
+mod tests {
+    mod forward_dictionary {
+        use crate::cedarwood::ForwardDictionary;
+
+        #[test]
+        fn test_empty_patterns() {
+            let patterns: Vec<&str> = vec![];
+
+            ForwardDictionary::new(patterns).unwrap();
+        }
+
+        #[test]
+        fn test_patterns() {
+            let patterns: Vec<&str> = vec!["foo", "bar"];
+
+            ForwardDictionary::new(patterns).unwrap();
+        }
+    }
+
+    mod backward_dictionary {
+        use crate::cedarwood::BackwardDictionary;
+
+        #[test]
+        fn test_empty_patterns() {
+            let patterns: Vec<&str> = vec![];
+
+            BackwardDictionary::new(patterns).unwrap();
+        }
+
+        #[test]
+        fn test_patterns() {
+            let patterns: Vec<&str> = vec!["foo", "bar"];
+
+            BackwardDictionary::new(patterns).unwrap();
+        }
+    }
+}
