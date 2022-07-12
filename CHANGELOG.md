@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## 0.5.0 (2022-07-13)
 ### ⚠ BREAKING CHANGES
-- The `tf_idf()` method of `Match` was renamed to `value()`.
+- Renamed `tf_idf()` method of `Match` to `value()`.
 
 ## 0.4.0 (2022-07-09)
 - Added benchmarks.
