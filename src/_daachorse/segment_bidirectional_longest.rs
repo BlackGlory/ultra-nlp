@@ -252,7 +252,7 @@ mod tests {
     }
 
     #[test]
-    fn test_tf_idf() {
+    fn test_value() {
         let text = " 当下雨天地面积水, hello world ";
         let dict: Vec<(&str, f64)> = vec![
             ("当", 0f64),
@@ -264,10 +264,10 @@ mod tests {
             ("积水", 6f64),
             ("你好世界", 7f64),
         ];
-        let forward_dict = ForwardDictionary::new_with_tf_idf(
+        let forward_dict = ForwardDictionary::new_with_values(
             dict.clone()
         ).unwrap();
-        let backward_dict = BackwardDictionary::new_with_tf_idf(
+        let backward_dict = BackwardDictionary::new_with_values(
             dict.clone()
         ).unwrap();
         // 正向结果: [当下, 雨天, 地面, 积水]
@@ -283,7 +283,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.tf_idf().unwrap())
+                .map(|x| x.value().unwrap())
                 .collect::<Vec<_>>(),
             vec![1f64, 4f64, 5f64, 6f64]
         )

@@ -52,11 +52,11 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                         text.len() - end_index,
                         text.len() - start_index,
                     );
-                    let tf_idf = dict.value_to_tf_idf
+                    let value = dict.i32_value_to_f64_value
                         .get(*id as usize)
                         .map(|x| *x);
 
-                    let result = Match::new(range, tf_idf);
+                    let result = Match::new(range, value);
                     matched_results.push(result);
 
                     next_start_index = start_index + length + 1;
@@ -257,9 +257,9 @@ mod tests {
     }
 
     #[test]
-    fn test_tf_idf() {
+    fn test_value() {
         let text = " 商品和服务, hello world ";
-        let dict = BackwardDictionary::new_with_tf_idf(
+        let dict = BackwardDictionary::new_with_values(
             vec![
                 ("商品", 0f64),
                 ("和服", 1f64),
@@ -277,7 +277,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.tf_idf().unwrap())
+                .map(|x| x.value().unwrap())
                 .collect::<Vec<_>>(),
             vec![0f64, 2f64]
         );

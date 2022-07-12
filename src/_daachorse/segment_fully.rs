@@ -21,7 +21,7 @@ pub fn segment_fully<T: AsRef<str>>(
                 .map(|mat| {
                     Match::new(
                         TextRange::new(mat.start(), mat.end()),
-                        dict.value_to_tf_idf
+                        dict.u32_value_to_f64_value
                             .get(mat.value() as usize)
                             .map(|x| *x),
                     )
@@ -65,7 +65,7 @@ pub fn segment_fully<T: AsRef<str>>(
 
                 let result = Match::new(
                     TextRange::new(mat.start(), mat.end()),
-                    dict.value_to_tf_idf
+                    dict.u32_value_to_f64_value
                         .get(mat.value() as usize)
                         .map(|x| *x),
                 );
@@ -207,9 +207,9 @@ mod tests {
     }
 
     #[test]
-    fn test_tf_idf() {
+    fn test_value() {
         let text = " 南京市长江大桥, hello world ";
-        let dict = StandardDictionary::new_with_tf_idf(
+        let dict = StandardDictionary::new_with_values(
             vec![
                 ("南京", 0f64),
                 ("南京市", 1f64),
@@ -229,7 +229,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.tf_idf().unwrap())
+                .map(|x| x.value().unwrap())
                 .collect::<Vec<_>>(),
             vec![
                 0f64,

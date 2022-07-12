@@ -11,19 +11,19 @@ use crate::{
 #[derive(Clone)]
 pub struct StandardDictionary {
     pub(crate) acdat: DoubleArrayAhoCorasick<u32>,
-    pub(crate) value_to_tf_idf: Vec<f64>,
+    pub(crate) u32_value_to_f64_value: Vec<f64>,
 }
 
 #[derive(Clone)]
 pub struct ForwardDictionary {
     pub(crate) acdat: DoubleArrayAhoCorasick<u32>,
-    pub(crate) value_to_tf_idf: Vec<f64>,
+    pub(crate) u32_value_to_f64_value: Vec<f64>,
 }
 
 #[derive(Clone)]
 pub struct BackwardDictionary {
     pub(crate) acdat: DoubleArrayAhoCorasick<u32>,
-    pub(crate) value_to_tf_idf: Vec<f64>,
+    pub(crate) u32_value_to_f64_value: Vec<f64>,
 }
 
 impl StandardDictionary {
@@ -39,18 +39,18 @@ impl StandardDictionary {
 
         Ok(Self {
             acdat,
-            value_to_tf_idf: vec![],
+            u32_value_to_f64_value: vec![],
         })
     }
 
-    pub fn new_with_tf_idf<
+    pub fn new_with_values<
         T: AsRef<str>,
         I: IntoIterator<Item = (T, f64)>
-    >(patterns_with_tf_idf: I) -> UltraNLPResult<Self> {
+    >(patterns_with_values: I) -> UltraNLPResult<Self> {
         let (
             patterns_with_values,
-            value_to_tf_idf
-        ) = prepare_patterns_with_tf_idf_for_dictionary(patterns_with_tf_idf)?;
+            u32_value_to_f64_value
+        ) = prepare_patterns_with_values_for_dictionary(patterns_with_values)?;
 
         let acdat = create_acdat_with_values(
             patterns_with_values,
@@ -59,7 +59,7 @@ impl StandardDictionary {
 
         Ok(Self {
             acdat,
-            value_to_tf_idf,
+            u32_value_to_f64_value,
         })
     }
 }
@@ -77,18 +77,18 @@ impl ForwardDictionary {
 
         Ok(Self {
             acdat,
-            value_to_tf_idf: vec![],
+            u32_value_to_f64_value: vec![],
         })
     }
 
-    pub fn new_with_tf_idf<
+    pub fn new_with_values<
         T: AsRef<str>,
         I: IntoIterator<Item = (T, f64)>
-    >(patterns_with_tf_idf: I) -> UltraNLPResult<Self> {
+    >(patterns_with_values: I) -> UltraNLPResult<Self> {
         let (
             patterns_with_values,
-            value_to_tf_idf
-        ) = prepare_patterns_with_tf_idf_for_dictionary(patterns_with_tf_idf)?;
+            u32_value_to_f64_value
+        ) = prepare_patterns_with_values_for_dictionary(patterns_with_values)?;
 
         let acdat = create_acdat_with_values(
             patterns_with_values,
@@ -97,7 +97,7 @@ impl ForwardDictionary {
 
         Ok(Self {
             acdat,
-            value_to_tf_idf,
+            u32_value_to_f64_value,
         })
     }
 }
@@ -122,18 +122,18 @@ impl BackwardDictionary {
 
         Ok(Self {
             acdat,
-            value_to_tf_idf: vec![],
+            u32_value_to_f64_value: vec![],
         })
     }
 
-    pub fn new_with_tf_idf<
+    pub fn new_with_values<
         T: AsRef<str>,
         I: IntoIterator<Item = (T, f64)>
-    >(patterns_with_tf_idf: I) -> UltraNLPResult<Self> {
+    >(patterns_with_values: I) -> UltraNLPResult<Self> {
         let (
             patterns_with_values,
-            value_to_tf_idf
-        ) = prepare_patterns_with_tf_idf_for_dictionary(patterns_with_tf_idf)?;
+            u32_value_to_f64_value
+        ) = prepare_patterns_with_values_for_dictionary(patterns_with_values)?;
 
         let patterns_with_values = patterns_with_values
             .into_iter()
@@ -154,7 +154,7 @@ impl BackwardDictionary {
 
         Ok(Self {
             acdat,
-            value_to_tf_idf,
+            u32_value_to_f64_value,
         })
     }
 }
@@ -196,27 +196,27 @@ fn prepare_patterns_for_dictionary<
     patterns
 }
 
-fn prepare_patterns_with_tf_idf_for_dictionary<
+fn prepare_patterns_with_values_for_dictionary<
     T: AsRef<str>,
     I: IntoIterator<Item = (T, f64)>
 >(
-    patterns_with_tf_idf: I,
+    patterns_with_values: I,
 ) -> UltraNLPResult<(Vec<(String, u32)>, Vec<f64>)> {
-    let mut value_to_tf_idf: Vec<f64> = vec![];
-    let patterns = patterns_with_tf_idf
+    let mut value_to_values: Vec<f64> = vec![];
+    let patterns = patterns_with_values
         .into_iter()
-        .map(|(pattern, tf_idf)| -> Result<(String, u32), _>{
+        .map(|(pattern, values)| -> Result<(String, u32), _>{
             let pattern = pattern.as_ref().to_lowercase();
 
-            value_to_tf_idf.push(tf_idf);
-            let value = u32::try_from(value_to_tf_idf.len() - 1)
+            value_to_values.push(values);
+            let value = u32::try_from(value_to_values.len() - 1)
                 .map_err(|err| UltraNLPError::new(err.to_string()))?;
 
             Ok((pattern, value))
         })
         .collect::<Result<Vec<_>, _>>()?;
 
-    Ok((patterns, value_to_tf_idf))
+    Ok((patterns, value_to_values))
 }
 
 #[cfg(test)]

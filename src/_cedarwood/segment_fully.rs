@@ -30,11 +30,11 @@ pub fn segment_fully<T: AsRef<str>>(
                         start_index,
                         start_index + length + 1
                     );
-                    let tf_idf = dict.value_to_tf_idf
+                    let value = dict.i32_value_to_f64_value
                         .get(id as usize)
                         .map(|x| *x);
 
-                    let result = Match::new(range, tf_idf);
+                    let result = Match::new(range, value);
                     matched_results.push(result);
 
                     if range.end_index() > maximum_matched_end_index {
@@ -221,9 +221,9 @@ mod tests {
     }
 
     #[test]
-    fn test_tf_idf() {
+    fn test_value() {
         let text = " 南京市长江大桥, hello world ";
-        let dict = ForwardDictionary::new_with_tf_idf(
+        let dict = ForwardDictionary::new_with_values(
             vec![
                 ("南京", 0f64),
                 ("南京市", 1f64),
@@ -243,7 +243,7 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.tf_idf().unwrap())
+                .map(|x| x.value().unwrap())
                 .collect::<Vec<_>>(),
             vec![
                 0f64,
