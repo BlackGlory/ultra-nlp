@@ -1,13 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.5.0 (2022-07-13)
+- The `tf_idf()` method of `Match` was renamed to `value()`.
+
 ## 0.4.0 (2022-07-09)
 - Added benchmarks.
 - Added `crate::cedarwood`.
 - Improved casting.
 
 ### ⚠ BREAKING CHANGES
-- Moved `*Dictionary` and segmenters into `crate::daachorse`
+- Moved `*Dictionary` and segmenters into `crate::daachorse`.
 
 ## 0.3.1 (2022-07-07)
 - Upgraded dependencies.
