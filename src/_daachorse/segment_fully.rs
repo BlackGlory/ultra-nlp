@@ -21,9 +21,7 @@ pub fn segment_fully<T: AsRef<str>>(
                 .map(|mat| {
                     Match::new(
                         TextRange::new(mat.start(), mat.end()),
-                        dict.u32_value_to_f64_value
-                            .get(mat.value() as usize)
-                            .map(|x| *x),
+                        Some(mat.value())
                     )
                 })
                 .collect()
@@ -65,9 +63,7 @@ pub fn segment_fully<T: AsRef<str>>(
 
                 let result = Match::new(
                     TextRange::new(mat.start(), mat.end()),
-                    dict.u32_value_to_f64_value
-                        .get(mat.value() as usize)
-                        .map(|x| *x),
+                    Some(mat.value())
                 );
                 results.push(result);
             }
@@ -209,14 +205,14 @@ mod tests {
     #[test]
     fn test_value() {
         let text = " 南京市长江大桥, hello world ";
-        let dict = StandardDictionary::new_with_values(
+        let dict = StandardDictionary::new(
             vec![
-                ("南京", 0f64),
-                ("南京市", 1f64),
-                ("市长", 2f64),
-                ("长江", 3f64),
-                ("大桥", 4f64),
-                ("你好世界", 5f64),
+                "南京",
+                "南京市",
+                "市长",
+                "长江",
+                "大桥",
+                "你好世界",
             ]
         ).unwrap();
 
@@ -229,14 +225,14 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.value().unwrap())
+                .map(|x| x.index_of_patterns().unwrap())
                 .collect::<Vec<_>>(),
             vec![
-                0f64,
-                1f64,
-                2f64,
-                3f64,
-                4f64
+                0,
+                1,
+                2,
+                3,
+                4,
             ]
         );
     }

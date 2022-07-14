@@ -254,20 +254,20 @@ mod tests {
     #[test]
     fn test_value() {
         let text = " 当下雨天地面积水, hello world ";
-        let dict: Vec<(&str, f64)> = vec![
-            ("当", 0f64),
-            ("当下", 1f64),
-            ("下雨", 2f64),
-            ("下雨天", 3f64),
-            ("雨天", 4f64),
-            ("地面", 5f64),
-            ("积水", 6f64),
-            ("你好世界", 7f64),
+        let dict: Vec<&str> = vec![
+            "当",
+            "当下",
+            "下雨",
+            "下雨天",
+            "雨天",
+            "地面",
+            "积水",
+            "你好世界",
         ];
-        let forward_dict = ForwardDictionary::new_with_values(
+        let forward_dict = ForwardDictionary::new(
             dict.clone()
         ).unwrap();
-        let backward_dict = BackwardDictionary::new_with_values(
+        let backward_dict = BackwardDictionary::new(
             dict.clone()
         ).unwrap();
         // 正向结果: [当下, 雨天, 地面, 积水]
@@ -283,9 +283,9 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.value().unwrap())
+                .map(|x| x.index_of_patterns().unwrap())
                 .collect::<Vec<_>>(),
-            vec![1f64, 4f64, 5f64, 6f64]
+            vec![1, 4, 5, 6]
         )
     }
 }

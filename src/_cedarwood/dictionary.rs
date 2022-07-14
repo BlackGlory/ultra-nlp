@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use cedarwood::Cedar;
 use crate::{
     UltraNLPResult,
@@ -7,76 +8,52 @@ use crate::{
 #[derive(Clone)]
 pub struct ForwardDictionary {
     pub(crate) dat: Cedar,
-    pub(crate) i32_value_to_f64_value: Vec<f64>,
 }
 
 #[derive(Clone)]
 pub struct BackwardDictionary {
     pub(crate) dat: Cedar,
-    pub(crate) i32_value_to_f64_value: Vec<f64>,
 }
 
 impl ForwardDictionary {
-    pub fn new<T: AsRef<str>, I: IntoIterator<Item = T>>(
+    pub fn new<T: AsRef<str>, I: IntoIterator<Item = T> + Clone>(
         patterns: I
     ) -> UltraNLPResult<Self> {
-        let patterns = prepare_patterns_for_dictionary(patterns);
+        let patterns = patterns
+            .into_iter()
+            .map(|x| x.as_ref().to_owned())
+            .collect::<Vec<String>>();
+        if patterns.len() == 0 {
+            return Err(UltraNLPError::new("The patterns cannot be empty"));
+        }
+        if !is_unique(patterns.clone()) {
+            return Err(UltraNLPError::new("The patterns are not unique"));
+        }
 
-        let dat = create_dat(patterns)?;
-
-        Ok(Self {
-            dat,
-            i32_value_to_f64_value: vec![],
-        })
-    }
-
-    pub fn new_with_values<
-        T: AsRef<str>,
-        I: IntoIterator<Item = (T, f64)>
-    >(patterns_with_values: I) -> UltraNLPResult<Self> {
-        let (
-            patterns_with_values,
-            i32_value_to_f64_value
-        ) = prepare_patterns_with_values_for_dictionary(patterns_with_values)?;
+        let patterns_with_values = prepare_patterns_for_dictionary(patterns)?;
 
         let dat = create_dat_with_values(patterns_with_values);
 
-        Ok(Self {
-            dat,
-            i32_value_to_f64_value
-        })
+        Ok(Self { dat })
     }
 }
 
 impl BackwardDictionary {
-    pub fn new<T: AsRef<str>, I: IntoIterator<Item = T>>(
+    pub fn new<T: AsRef<str>, I: IntoIterator<Item = T> + Clone>(
         patterns: I
     ) -> UltraNLPResult<Self> {
-        let patterns = prepare_patterns_for_dictionary(patterns)
+        let patterns = patterns
             .into_iter()
-            .map(|x| x
-                .chars()
-                .rev()
-                .collect::<String>()
-            )
-            .collect::<Vec<_>>();
+            .map(|x| x.as_ref().to_owned())
+            .collect::<Vec<String>>();
+        if patterns.len() == 0 {
+            return Err(UltraNLPError::new("The patterns cannot be empty"));
+        }
+        if !is_unique(patterns.clone()) {
+            return Err(UltraNLPError::new("The patterns are not unique"));
+        }
 
-        let dat = create_dat(patterns)?;
-
-        Ok(Self {
-            dat,
-            i32_value_to_f64_value: vec![],
-        })
-    }
-
-    pub fn new_with_values<
-        T: AsRef<str>,
-        I: IntoIterator<Item = (T, f64)>
-    >(patterns_with_values: I) -> UltraNLPResult<Self> {
-        let (
-            patterns_with_values,
-            i32_value_to_f64_value
-        ) = prepare_patterns_with_values_for_dictionary(patterns_with_values)?;
+        let patterns_with_values = prepare_patterns_for_dictionary(patterns)?;
 
         let patterns_with_values = patterns_with_values
             .into_iter()
@@ -92,37 +69,8 @@ impl BackwardDictionary {
 
         let dat = create_dat_with_values(patterns_with_values);
 
-        Ok(Self {
-            dat,
-            i32_value_to_f64_value,
-        })
+        Ok(Self { dat })
     }
-}
-
-fn create_dat<
-    T: AsRef<str>,
-    I: IntoIterator<Item = T>,
->(patterns: I) -> UltraNLPResult<Cedar> {
-    let key_values: Vec<(String, i32)> = patterns
-        .into_iter()
-        .enumerate()
-        .map(|(i, key)| -> Result<_, _> {
-            let key = key.as_ref().to_owned();
-            let value = i32::try_from(i)
-                .map_err(|err| UltraNLPError::new(err.to_string()))?;
-
-            Ok((key, value))
-        })
-        .collect::<Result<_, _>>()?;
-    let key_values: Vec<(&str, i32)> = key_values
-        .iter()
-        .map(|(key, value)| (key.as_str(), *value))
-        .collect::<Vec<_>>();
-
-    let mut dat = Cedar::new();
-    dat.build(&key_values);
-
-    Ok(dat)
 }
 
 fn create_dat_with_values<
@@ -151,36 +99,32 @@ fn create_dat_with_values<
 fn prepare_patterns_for_dictionary<
     T: AsRef<str>,
     I: IntoIterator<Item = T>
->(patterns: I) -> Vec<String> {
-    let patterns = patterns
-        .into_iter()
-        .map(|x| x.as_ref().to_lowercase())
-        .collect();
-    
-    patterns
-}
-
-fn prepare_patterns_with_values_for_dictionary<
-    T: AsRef<str>,
-    I: IntoIterator<Item = (T, f64)>
 >(
-    patterns_with_values: I,
-) -> UltraNLPResult<(Vec<(String, i32)>, Vec<f64>)> {
-    let mut i32_value_to_f64_value: Vec<f64> = vec![];
-    let patterns = patterns_with_values
+    patterns: I,
+) -> UltraNLPResult<Vec<(String, i32)>> {
+    let patterns_with_values = patterns
         .into_iter()
-        .map(|(pattern, values)| -> Result<(String, i32), _>{
+        .enumerate()
+        .map(|(index, pattern)| -> Result<(String, i32), _>{
             let pattern = pattern.as_ref().to_lowercase();
 
-            i32_value_to_f64_value.push(values);
-            let value = i32::try_from(i32_value_to_f64_value.len() - 1)
+            let value = i32::try_from(index)
                 .map_err(|err| UltraNLPError::new(err.to_string()))?;
 
             Ok((pattern, value))
         })
         .collect::<Result<Vec<_>, _>>()?;
 
-    Ok((patterns, i32_value_to_f64_value))
+    Ok(patterns_with_values)
+}
+
+fn is_unique<T: AsRef<str>, I: IntoIterator<Item = T>>(
+    collection: I
+) -> bool {
+    let mut set = HashSet::new();
+    collection
+        .into_iter()
+        .all(|x| set.insert(x.as_ref().to_owned()))
 }
 
 #[cfg(test)]
@@ -192,7 +136,10 @@ mod tests {
         fn test_empty_patterns() {
             let patterns: Vec<&str> = vec![];
 
-            ForwardDictionary::new(patterns).unwrap();
+            assert_eq!(
+                ForwardDictionary::new(patterns).is_err(),
+                true
+            );
         }
 
         #[test]
@@ -200,6 +147,16 @@ mod tests {
             let patterns: Vec<&str> = vec!["foo", "bar"];
 
             ForwardDictionary::new(patterns).unwrap();
+        }
+
+        #[test]
+        fn test_same_patterns() {
+            let patterns: Vec<&str> = vec!["foo", "foo"];
+
+            assert_eq!(
+                ForwardDictionary::new(patterns).is_err(),
+                true
+            );
         }
     }
 
@@ -210,7 +167,10 @@ mod tests {
         fn test_empty_patterns() {
             let patterns: Vec<&str> = vec![];
 
-            BackwardDictionary::new(patterns).unwrap();
+            assert_eq!(
+                BackwardDictionary::new(patterns).is_err(),
+                true
+            );
         }
 
         #[test]
@@ -218,6 +178,16 @@ mod tests {
             let patterns: Vec<&str> = vec!["foo", "bar"];
 
             BackwardDictionary::new(patterns).unwrap();
+        }
+
+        #[test]
+        fn test_same_patterns() {
+            let patterns: Vec<&str> = vec!["foo", "foo"];
+
+            assert_eq!(
+                BackwardDictionary::new(patterns).is_err(),
+                true
+            );
         }
     }
 }

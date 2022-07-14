@@ -35,9 +35,7 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                             text.len() - real_mat_end_index,
                             text.len() - real_mat_start_index,
                         ),
-                        dict.u32_value_to_f64_value
-                            .get(mat.value() as usize)
-                            .map(|x| *x),
+                        Some(mat.value())
                     );
 
                     if mat.start() > 0 {
@@ -221,12 +219,12 @@ mod tests {
     #[test]
     fn test_value() {
         let text = " 商品和服务, hello world ";
-        let dict = BackwardDictionary::new_with_values(
+        let dict = BackwardDictionary::new(
             vec![
-                ("商品", 0f64),
-                ("和服", 1f64),
-                ("服务", 2f64),
-                ("你好世界", 3f64),
+                "商品",
+                "和服",
+                "服务",
+                "你好世界",
             ]
         ).unwrap();
 
@@ -239,9 +237,9 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.value().unwrap())
+                .map(|x| x.index_of_patterns().unwrap())
                 .collect::<Vec<_>>(),
-            vec![0f64, 2f64]
+            vec![0, 2]
         );
     }
 }

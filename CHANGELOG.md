@@ -1,9 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.6.0 (2022-07-15)
+- Added `Match::index_of_patterns()` method.
+
+### ⚠ BREAKING CHANGES
+- Removed `*Dictionary::new_with_values()` methods.
+- Removed `extract_keywords` function.
+- Removed `Match::value()` method.
+- `cedarwood::*Dictionary` no longer accepts empty patterns or non-unique patterns.
+
 ## 0.5.0 (2022-07-13)
 ### ⚠ BREAKING CHANGES
-- Renamed `tf_idf()` method of `Match` to `value()`.
+- Renamed `Match::tf_idf()` to `Match::value()`.
 
 ## 0.4.0 (2022-07-09)
 - Added benchmarks.

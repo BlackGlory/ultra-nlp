@@ -26,9 +26,7 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                     let real_mat_end_index = start_index + mat.end();
                     let result = Match::new(
                         TextRange::new(real_mat_start_index, real_mat_end_index),
-                        dict.u32_value_to_f64_value
-                            .get(mat.value() as usize)
-                            .map(|x| *x),
+                        Some(mat.value())
                     );
 
                     if mat.start() > 0 {
@@ -209,12 +207,12 @@ mod tests {
     #[test]
     fn test_value() {
         let text = " 商品和服务, hello world ";
-        let dict = ForwardDictionary::new_with_values(
+        let dict = ForwardDictionary::new(
             vec![
-                ("商品", 0f64),
-                ("和服", 1f64),
-                ("服务", 2f64),
-                ("你好世界", 3f64),
+                "商品",
+                "和服",
+                "服务",
+                "你好世界",
             ]
         ).unwrap();
 
@@ -227,9 +225,9 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.value().unwrap())
+                .map(|x| x.index_of_patterns().unwrap())
                 .collect::<Vec<_>>(),
-            vec![0f64, 1f64]
+            vec![0, 1]
         );
     }
 }

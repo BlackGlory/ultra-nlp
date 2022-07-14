@@ -3,6 +3,7 @@ use crate::{
     Match,
     TextRange,
     BehaviorForUnmatched,
+    UltraNLPError,
 };
 use crate::cedarwood::BackwardDictionary;
 
@@ -52,11 +53,12 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                         text.len() - end_index,
                         text.len() - start_index,
                     );
-                    let value = dict.i32_value_to_f64_value
-                        .get(*id as usize)
-                        .map(|x| *x);
+                    let value = u32::try_from(*id)
+                        .map_err(|err| UltraNLPError::new(err.to_string()))
+                        // 没有使用负数值, 且u32的最大值大于i32, 转换应当总是能成功
+                        .unwrap();
 
-                    let result = Match::new(range, value);
+                    let result = Match::new(range, Some(value));
                     matched_results.push(result);
 
                     next_start_index = start_index + length + 1;
@@ -259,12 +261,12 @@ mod tests {
     #[test]
     fn test_value() {
         let text = " 商品和服务, hello world ";
-        let dict = BackwardDictionary::new_with_values(
+        let dict = BackwardDictionary::new(
             vec![
-                ("商品", 0f64),
-                ("和服", 1f64),
-                ("服务", 2f64),
-                ("你好世界", 3f64),
+                "商品",
+                "和服",
+                "服务",
+                "你好世界",
             ]
         ).unwrap();
 
@@ -277,9 +279,9 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.value().unwrap())
+                .map(|x| x.index_of_patterns().unwrap())
                 .collect::<Vec<_>>(),
-            vec![0f64, 2f64]
+            vec![0, 2]
         );
     }
 }

@@ -2,7 +2,7 @@ use crate::utils::split_as_char_ranges;
 use crate::{
     Match,
     TextRange,
-    BehaviorForUnmatched,
+    BehaviorForUnmatched, UltraNLPError,
 };
 use crate::cedarwood::ForwardDictionary;
 
@@ -30,11 +30,12 @@ pub fn segment_fully<T: AsRef<str>>(
                         start_index,
                         start_index + length + 1
                     );
-                    let value = dict.i32_value_to_f64_value
-                        .get(id as usize)
-                        .map(|x| *x);
+                    let value = u32::try_from(id)
+                        .map_err(|err| UltraNLPError::new(err.to_string()))
+                        // 没有使用负数值, 且u32的最大值大于i32, 转换应当总是能成功
+                        .unwrap();
 
-                    let result = Match::new(range, value);
+                    let result = Match::new(range, Some(value));
                     matched_results.push(result);
 
                     if range.end_index() > maximum_matched_end_index {
@@ -223,14 +224,14 @@ mod tests {
     #[test]
     fn test_value() {
         let text = " 南京市长江大桥, hello world ";
-        let dict = ForwardDictionary::new_with_values(
+        let dict = ForwardDictionary::new(
             vec![
-                ("南京", 0f64),
-                ("南京市", 1f64),
-                ("市长", 2f64),
-                ("长江", 3f64),
-                ("大桥", 4f64),
-                ("你好世界", 5f64),
+                "南京",
+                "南京市",
+                "市长",
+                "长江",
+                "大桥",
+                "你好世界",
             ]
         ).unwrap();
 
@@ -243,14 +244,14 @@ mod tests {
         assert_eq!(
             result
                 .iter()
-                .map(|x| x.value().unwrap())
+                .map(|x| x.index_of_patterns().unwrap())
                 .collect::<Vec<_>>(),
             vec![
-                0f64,
-                1f64,
-                2f64,
-                3f64,
-                4f64
+                0,
+                1,
+                2,
+                3,
+                4,
             ]
         );
     }
