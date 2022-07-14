@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## 0.6.0 (2022-07-15)
 - Added `Match::index_of_patterns()` method.
+- Added `Match::value_from()` method.
 
 ### ⚠ BREAKING CHANGES
 - Removed `*Dictionary::new_with_values()` methods.

@@ -18,4 +18,56 @@ impl Match {
     pub fn index_of_patterns(&self) -> Option<u32> {
         self.index_of_patterns
     }
+
+    /**
+     * A shortcut to get value from map by the index of patterns
+     */
+    pub fn value_from<T: Copy>(&self, map: Vec<T>) -> Option<T> {
+        match self.index_of_patterns {
+            Some(index) => {
+                match map.get(index as usize) {
+                    Some(result) => Some(*result),
+                    None => None
+                }
+            }
+            None => None
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    mod value {
+        use crate::{Match, TextRange};
+
+        #[test]
+        fn test_none() {
+            let mat = Match::new(TextRange::new(0, 1), None);
+            let map = vec![1, 2];
+
+            let result = mat.value_from(map);
+
+            assert!(result.is_none());
+        }
+
+        #[test]
+        fn test_some() {
+            let mat = Match::new(TextRange::new(0, 1), Some(1));
+            let map = vec!["0", "1"];
+
+            let result = mat.value_from(map).unwrap();
+
+            assert_eq!(result, "1");
+        }
+
+        #[test]
+        fn test_out_of_bounds() {
+            let mat = Match::new(TextRange::new(0, 1), Some(2));
+            let map = vec!["0", "1"];
+
+            let result = mat.value_from(map);
+
+            assert!(result.is_none());
+        }
+    }
 }

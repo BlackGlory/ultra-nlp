@@ -125,10 +125,7 @@ mod tests {
         fn test_empty_patterns() {
             let patterns: Vec<&str> = vec![];
 
-            assert_eq!(
-                StandardDictionary::new(patterns).is_err(),
-                true
-            );
+            assert!(StandardDictionary::new(patterns).is_err());
         }
 
         #[test]
@@ -142,10 +139,7 @@ mod tests {
         fn test_same_patterns() {
             let patterns: Vec<&str> = vec!["foo", "foo"];
 
-            assert_eq!(
-                StandardDictionary::new(patterns).is_err(),
-                true
-            )
+            assert!(StandardDictionary::new(patterns).is_err());
         }
     }
 
@@ -156,10 +150,7 @@ mod tests {
         fn test_empty_patterns() {
             let patterns: Vec<&str> = vec![];
 
-            assert_eq!(
-                ForwardDictionary::new(patterns).is_err(),
-                true
-            );
+            assert!(ForwardDictionary::new(patterns).is_err());
         }
 
         #[test]
@@ -173,10 +164,7 @@ mod tests {
         fn test_same_patterns() {
             let patterns: Vec<&str> = vec!["foo", "foo"];
 
-            assert_eq!(
-                ForwardDictionary::new(patterns).is_err(),
-                true
-            );
+            assert!(ForwardDictionary::new(patterns).is_err());
         }
     }
 
@@ -187,10 +175,7 @@ mod tests {
         fn test_empty_patterns() {
             let patterns: Vec<&str> = vec![];
 
-            assert_eq!(
-                BackwardDictionary::new(patterns).is_err(),
-                true
-            );
+            assert!(BackwardDictionary::new(patterns).is_err());
         }
 
         #[test]
@@ -204,10 +189,7 @@ mod tests {
         fn test_same_patterns() {
             let patterns: Vec<&str> = vec!["foo", "foo"];
 
-            assert_eq!(
-                BackwardDictionary::new(patterns).is_err(),
-                true
-            );
+            assert!(BackwardDictionary::new(patterns).is_err());
         }
     }
 }
