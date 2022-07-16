@@ -19,18 +19,19 @@ impl ForwardDictionary {
     pub fn new<T: AsRef<str>, I: IntoIterator<Item = T> + Clone>(
         patterns: I
     ) -> UltraNLPResult<Self> {
-        let patterns = patterns
-            .into_iter()
-            .map(|x| x.as_ref().to_owned())
-            .collect::<Vec<String>>();
-        if patterns.len() == 0 {
+        let patterns_with_values = prepare_patterns_for_dictionary(patterns)?;
+        if patterns_with_values.len() == 0 {
             return Err(UltraNLPError::new("The patterns cannot be empty"));
         }
-        if !is_unique(patterns.clone()) {
+
+        let patterns = patterns_with_values
+            .clone()
+            .into_iter()
+            .map(|(x, _)| x);
+        if !is_unique(patterns) {
             return Err(UltraNLPError::new("The patterns are not unique"));
         }
 
-        let patterns_with_values = prepare_patterns_for_dictionary(patterns)?;
 
         let dat = create_dat_with_values(patterns_with_values);
 
@@ -42,18 +43,18 @@ impl BackwardDictionary {
     pub fn new<T: AsRef<str>, I: IntoIterator<Item = T> + Clone>(
         patterns: I
     ) -> UltraNLPResult<Self> {
-        let patterns = patterns
-            .into_iter()
-            .map(|x| x.as_ref().to_owned())
-            .collect::<Vec<String>>();
-        if patterns.len() == 0 {
+        let patterns_with_values = prepare_patterns_for_dictionary(patterns)?;
+        if patterns_with_values.len() == 0 {
             return Err(UltraNLPError::new("The patterns cannot be empty"));
         }
-        if !is_unique(patterns.clone()) {
+
+        let patterns = patterns_with_values
+            .clone()
+            .into_iter()
+            .map(|(x, _)| x);
+        if !is_unique(patterns) {
             return Err(UltraNLPError::new("The patterns are not unique"));
         }
-
-        let patterns_with_values = prepare_patterns_for_dictionary(patterns)?;
 
         let patterns_with_values = patterns_with_values
             .into_iter()
@@ -148,7 +149,7 @@ mod tests {
 
         #[test]
         fn test_same_patterns() {
-            let patterns: Vec<&str> = vec!["foo", "foo"];
+            let patterns: Vec<&str> = vec!["foo", "FOO"];
 
             assert!(ForwardDictionary::new(patterns).is_err());
         }
@@ -173,7 +174,7 @@ mod tests {
 
         #[test]
         fn test_same_patterns() {
-            let patterns: Vec<&str> = vec!["foo", "foo"];
+            let patterns: Vec<&str> = vec!["foo", "FOO"];
 
             assert!(BackwardDictionary::new(patterns).is_err());
         }

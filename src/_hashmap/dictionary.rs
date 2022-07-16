@@ -73,7 +73,7 @@ mod tests {
 
     #[test]
     fn test_same_patterns() {
-        let patterns: Vec<&str> = vec!["foo", "foo"];
+        let patterns: Vec<&str> = vec!["foo", "FOO"];
 
         assert!(Dictionary::new(patterns).is_err());
     }

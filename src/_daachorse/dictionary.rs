@@ -137,7 +137,7 @@ mod tests {
 
         #[test]
         fn test_same_patterns() {
-            let patterns: Vec<&str> = vec!["foo", "foo"];
+            let patterns: Vec<&str> = vec!["foo", "FOO"];
 
             assert!(StandardDictionary::new(patterns).is_err());
         }
@@ -162,7 +162,7 @@ mod tests {
 
         #[test]
         fn test_same_patterns() {
-            let patterns: Vec<&str> = vec!["foo", "foo"];
+            let patterns: Vec<&str> = vec!["foo", "FOO"];
 
             assert!(ForwardDictionary::new(patterns).is_err());
         }
@@ -187,7 +187,7 @@ mod tests {
 
         #[test]
         fn test_same_patterns() {
-            let patterns: Vec<&str> = vec!["foo", "foo"];
+            let patterns: Vec<&str> = vec!["foo", "FOO"];
 
             assert!(BackwardDictionary::new(patterns).is_err());
         }
