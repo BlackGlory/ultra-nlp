@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.6.2 (2022-07-17)
+- Fixed the edge case about chars on the edge.
+
 ## 0.6.1 (2022-07-16)
 - Fixed an edge case about checking pattern uniqueness.
 - Added `crate::hashmap`.
