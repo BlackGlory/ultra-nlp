@@ -5,9 +5,7 @@ criterion_group!(benches, bench_segment_fully);
 criterion_main!(benches);
 
 fn bench_segment_fully(c: &mut Criterion) {
-    let mut group = c.benchmark_group(
-        "segment_fully"
-    );
+    let mut group = c.benchmark_group("segment_fully");
 
     let patterns: Vec<&str> = vec!["南京", "南京市", "市长", "长江", "大桥", "你好世界"];
     let text = " 南京市长江大桥, hello world ";

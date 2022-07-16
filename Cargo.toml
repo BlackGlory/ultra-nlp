@@ -17,6 +17,10 @@ cedarwood = "0.4.5"
 criterion = "0.3.6"
 
 [[bench]]
+name = "dictionary"
+harness = false
+
+[[bench]]
 name = "segment_fully"
 harness = false
 
