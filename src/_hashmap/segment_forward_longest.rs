@@ -30,7 +30,7 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                 usize, // end_index
                 u32, // value
             )> = None;
-            for end_index in (start_index + 1)..text.len() {
+            for end_index in (start_index + 1)..=text.len() {
                 if text.is_char_boundary(end_index) {
                     let sub_text = &text[start_index..end_index];
 
@@ -253,6 +253,28 @@ mod tests {
                 .map(|x| x.index_of_patterns().unwrap())
                 .collect::<Vec<_>>(),
             vec![0, 1]
+        );
+    }
+
+    #[test]
+    fn test_chars_on_edge() {
+        let text = "你好世界";
+        let dict = Dictionary::new(
+            vec!["你好", "世界"]
+        ).unwrap();
+
+        let result = segment_forward_longest(
+            text,
+            &dict,
+            BehaviorForUnmatched::Ignore
+        );
+
+        assert_eq!(
+            result
+                .iter()
+                .map(|x| x.range().extract(text))
+                .collect::<Vec<_>>(),
+            vec!["你好", "世界"]
         );
     }
 }

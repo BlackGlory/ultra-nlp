@@ -21,7 +21,7 @@ pub fn segment_fully<T: AsRef<str>>(
     for start_index in 0..text.len() {
         if text.is_char_boundary(start_index) {
             let mut matched_results: Vec<Match> = vec![];
-            for end_index in (start_index + 1)..text.len() {
+            for end_index in (start_index + 1)..=text.len() {
                 if text.is_char_boundary(end_index) {
                     let sub_text = &text[start_index..end_index];
 
@@ -250,6 +250,28 @@ mod tests {
                 3,
                 4,
             ]
+        );
+    }
+
+    #[test]
+    fn test_chars_on_edge() {
+        let text = "你好世界";
+        let dict = Dictionary::new(
+            vec!["你好", "世界"]
+        ).unwrap();
+
+        let result = segment_fully(
+            text,
+            &dict,
+            BehaviorForUnmatched::Ignore
+        );
+
+        assert_eq!(
+            result
+                .iter()
+                .map(|x| x.range().extract(text))
+                .collect::<Vec<_>>(),
+            vec!["你好", "世界"]
         );
     }
 }

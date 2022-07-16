@@ -255,4 +255,26 @@ mod tests {
             ]
         );
     }
+
+    #[test]
+    fn test_chars_on_edge() {
+        let text = "你好世界";
+        let dict = ForwardDictionary::new(
+            vec!["你好", "世界"]
+        ).unwrap();
+
+        let result = segment_fully(
+            text,
+            &dict,
+            BehaviorForUnmatched::Ignore
+        );
+
+        assert_eq!(
+            result
+                .iter()
+                .map(|x| x.range().extract(text))
+                .collect::<Vec<_>>(),
+            vec!["你好", "世界"]
+        );
+    }
 }

@@ -289,4 +289,31 @@ mod tests {
             vec![1, 4, 5, 6]
         )
     }
+
+    #[test]
+    fn test_chars_on_edge() {
+        let text = "你好世界";
+        let patterns = vec!["你好", "世界"];
+        let forward_dict = ForwardDictionary::new(
+            patterns.clone()
+        ).unwrap();
+        let backward_dict = BackwardDictionary::new(
+            patterns.clone()
+        ).unwrap();
+
+        let result = segment_bidirectional_longest(
+            text,
+            &forward_dict,
+            &backward_dict,
+            BehaviorForUnmatched::Ignore
+        );
+
+        assert_eq!(
+            result
+                .iter()
+                .map(|x| x.range().extract(text))
+                .collect::<Vec<_>>(),
+            vec!["你好", "世界"]
+        );
+    }
 }
