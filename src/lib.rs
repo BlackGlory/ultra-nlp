@@ -1,5 +1,6 @@
 mod _daachorse;
 mod _cedarwood;
+mod _hashmap;
 mod r#match;
 mod text_range;
 mod behavior_for_unmatched;
@@ -17,4 +18,8 @@ pub mod daachorse {
 
 pub mod cedarwood {
     pub use crate::_cedarwood::*;
+}
+
+pub mod hashmap {
+    pub use crate::_hashmap::*;
 }
