@@ -55,53 +55,26 @@ fn prepare_patterns_for_dictionary<
 
 #[cfg(test)]
 mod tests {
-    mod forward_dictionary {
-        use crate::cedarwood::ForwardDictionary;
+    use crate::hashmap::Dictionary;
 
-        #[test]
-        fn test_empty_patterns() {
-            let patterns: Vec<&str> = vec![];
+    #[test]
+    fn test_empty_patterns() {
+        let patterns: Vec<&str> = vec![];
 
-            assert!(ForwardDictionary::new(patterns).is_err());
-        }
-
-        #[test]
-        fn test_patterns() {
-            let patterns: Vec<&str> = vec!["foo", "bar"];
-
-            ForwardDictionary::new(patterns).unwrap();
-        }
-
-        #[test]
-        fn test_same_patterns() {
-            let patterns: Vec<&str> = vec!["foo", "foo"];
-
-            assert!(ForwardDictionary::new(patterns).is_err());
-        }
+        assert!(Dictionary::new(patterns).is_err());
     }
 
-    mod backward_dictionary {
-        use crate::cedarwood::BackwardDictionary;
+    #[test]
+    fn test_patterns() {
+        let patterns: Vec<&str> = vec!["foo", "bar"];
 
-        #[test]
-        fn test_empty_patterns() {
-            let patterns: Vec<&str> = vec![];
+        Dictionary::new(patterns).unwrap();
+    }
 
-            assert!(BackwardDictionary::new(patterns).is_err());
-        }
+    #[test]
+    fn test_same_patterns() {
+        let patterns: Vec<&str> = vec!["foo", "foo"];
 
-        #[test]
-        fn test_patterns() {
-            let patterns: Vec<&str> = vec!["foo", "bar"];
-
-            BackwardDictionary::new(patterns).unwrap();
-        }
-
-        #[test]
-        fn test_same_patterns() {
-            let patterns: Vec<&str> = vec!["foo", "foo"];
-
-            assert!(BackwardDictionary::new(patterns).is_err());
-        }
+        assert!(Dictionary::new(patterns).is_err());
     }
 }
