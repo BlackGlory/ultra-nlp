@@ -5,16 +5,11 @@ use crate::{
 };
 
 #[derive(Clone)]
-pub struct ForwardDictionary {
+pub struct Dictionary {
     pub(crate) map: HashMap<String, u32>,
 }
 
-#[derive(Clone)]
-pub struct BackwardDictionary {
-    pub(crate) map: HashMap<String, u32>,
-}
-
-impl ForwardDictionary {
+impl Dictionary {
     pub fn new<T: AsRef<str>, I: IntoIterator<Item = T> + Clone>(
         patterns: I
     ) -> UltraNLPResult<Self> {
@@ -22,39 +17,6 @@ impl ForwardDictionary {
         if patterns_with_values.len() == 0 {
             return Err(UltraNLPError::new("The patterns cannot be empty"));
         }
-
-        let mut map: HashMap<String, u32> = HashMap::new();
-        for (pattern, value) in patterns_with_values {
-            let result = map.insert(pattern, value);
-
-            if let Some(_) = result {
-                return Err(UltraNLPError::new("The patterns are not unique"));
-            }
-        }
-
-        Ok(Self { map })
-    }
-}
-
-impl BackwardDictionary {
-    pub fn new<T: AsRef<str>, I: IntoIterator<Item = T> + Clone>(
-        patterns: I
-    ) -> UltraNLPResult<Self> {
-        let patterns_with_values = prepare_patterns_for_dictionary(patterns)?;
-        if patterns_with_values.len() == 0 {
-            return Err(UltraNLPError::new("The patterns cannot be empty"));
-        }
-
-        let patterns_with_values = patterns_with_values
-            .into_iter()
-            .map(|(pattern, value)| {
-                let pattern = pattern
-                    .chars()
-                    .rev()
-                    .collect::<String>();
-
-                (pattern, value)
-            });
 
         let mut map: HashMap<String, u32> = HashMap::new();
         for (pattern, value) in patterns_with_values {

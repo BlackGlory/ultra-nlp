@@ -49,18 +49,14 @@ fn bench_segment_bidirectional_longest(c: &mut Criterion) {
     });
 
     group.bench_function("hashmap", |b| {
-        let forward_dict = hashmap::ForwardDictionary::new(
-            patterns.clone()
-        ).unwrap();
-        let backward_dict = hashmap::BackwardDictionary::new(
+        let dict = hashmap::Dictionary::new(
             patterns.clone()
         ).unwrap();
 
         b.iter(|| {
             hashmap::segment_bidirectional_longest(
                 black_box(text),
-                black_box(&forward_dict),
-                black_box(&backward_dict),
+                black_box(&dict),
                 black_box(BehaviorForUnmatched::Ignore),
             );
         });

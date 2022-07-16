@@ -4,12 +4,12 @@ use crate::{
     TextRange,
     BehaviorForUnmatched,
 };
-use crate::hashmap::ForwardDictionary;
+use crate::hashmap::Dictionary;
 
 // 待generator稳定, 改为generator, 以便返回Iterator.
 pub fn segment_forward_longest<T: AsRef<str>>(
     text: T,
-    dict: &ForwardDictionary,
+    dict: &Dictionary,
     behavior_for_unmatched: BehaviorForUnmatched,
 ) -> Vec<Match> {
     let text = text
@@ -18,8 +18,7 @@ pub fn segment_forward_longest<T: AsRef<str>>(
 
     let mut results: Vec<Match> = vec![];
 
-    let mut unconsumed_word_start_index: Option<usize> = None;
-    let mut unconsumed_char_start_index: Option<usize> = None;
+    let mut unconsumed_start_index: Option<usize> = None;
     let mut maximum_matched_end_index = 0;
     let mut start_index = 0;
     while start_index < text.len() {
@@ -59,18 +58,18 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                 BehaviorForUnmatched::KeepAsWords => {
                     if matched_results.len() > 0 {
                         // 将之前未消耗的word作为Match提交
-                        if let Some(index) = unconsumed_word_start_index {
+                        if let Some(index) = unconsumed_start_index {
                             let result = Match::new(
                                 TextRange::new(index, start_index),
                                 None,
                             );
                             unmatched_results.push(result);
-                            unconsumed_word_start_index = None;
+                            unconsumed_start_index = None;
                         }
                     } else {
                         if start_index >= maximum_matched_end_index {
-                            if let None = unconsumed_word_start_index {
-                                unconsumed_word_start_index = Some(start_index);
+                            if let None = unconsumed_start_index {
+                                unconsumed_start_index = Some(start_index);
                             }
                         }
                     }
@@ -78,18 +77,18 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                 BehaviorForUnmatched::KeepAsChars => {
                     if matched_results.len() > 0 {
                         // 将之前未消耗的char作为Match提交
-                        if let Some(index) = unconsumed_char_start_index {
+                        if let Some(index) = unconsumed_start_index {
                             let result = Match::new(
                                 TextRange::new(index, start_index),
                                 None,
                             );
                             unmatched_results.push(result);
-                            unconsumed_char_start_index = None;
+                            unconsumed_start_index = None;
                         }
                     } else {
                         if start_index >= maximum_matched_end_index {
-                            if let None = unconsumed_char_start_index {
-                                unconsumed_char_start_index = Some(start_index);
+                            if let None = unconsumed_start_index {
+                                unconsumed_start_index = Some(start_index);
                             }
                         }
                     }
@@ -137,13 +136,13 @@ mod tests {
     use crate::BehaviorForUnmatched;
     use crate::hashmap::{
         segment_forward_longest,
-        ForwardDictionary,
+        Dictionary,
     };
 
     #[test]
     fn test_ignore_unmatched() {
         let text = " 商品和服务, hello world ";
-        let dict = ForwardDictionary::new(
+        let dict = Dictionary::new(
             vec!["商品", "和服", "服务", "你好世界"]
         ).unwrap();
 
@@ -165,7 +164,7 @@ mod tests {
     #[test]
     fn test_keep_unmatched_as_chars() {
         let text = " 商品和服务, hello world ";
-        let dict = ForwardDictionary::new(
+        let dict = Dictionary::new(
             vec!["商品", "和服", "服务", "你好世界"]
         ).unwrap();
 
@@ -206,7 +205,7 @@ mod tests {
     #[test]
     fn test_keep_unmatched_as_words() {
         let text = " 商品和服务, hello world ";
-        let dict = ForwardDictionary::new(
+        let dict = Dictionary::new(
             vec!["商品", "和服", "服务", "你好世界"]
         ).unwrap();
 
@@ -233,7 +232,7 @@ mod tests {
     #[test]
     fn test_value() {
         let text = " 商品和服务, hello world ";
-        let dict = ForwardDictionary::new(
+        let dict = Dictionary::new(
             vec![
                 "商品",
                 "和服",

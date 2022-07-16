@@ -4,12 +4,12 @@ use crate::{
     TextRange,
     BehaviorForUnmatched,
 };
-use crate::hashmap::ForwardDictionary;
+use crate::hashmap::Dictionary;
 
 // 待generator稳定, 改为generator, 以便返回Iterator.
 pub fn segment_fully<T: AsRef<str>>(
     text: T,
-    dict: &ForwardDictionary,
+    dict: &Dictionary,
     behavior_for_unmatched: BehaviorForUnmatched,
 ) -> Vec<Match> {
     let text = text.as_ref().to_lowercase();
@@ -120,13 +120,13 @@ mod tests {
     use crate::BehaviorForUnmatched;
     use crate::hashmap::{
         segment_fully,
-        ForwardDictionary,
+        Dictionary,
     };
 
     #[test]
     fn test_ignore_unmatched() {
         let text = " 南京市长江大桥, hello world ";
-        let dict = ForwardDictionary::new(
+        let dict = Dictionary::new(
             vec!["南京", "南京市", "市长", "长江", "大桥", "你好世界"]
         ).unwrap();
 
@@ -148,7 +148,7 @@ mod tests {
     #[test]
     fn test_keep_unmatched_as_chars() {
         let text = " 南京市长江大桥, hello world ";
-        let dict = ForwardDictionary::new(
+        let dict = Dictionary::new(
             vec!["南京", "南京市", "市长", "长江", "大桥", "你好世界"]
         ).unwrap();
 
@@ -191,7 +191,7 @@ mod tests {
     #[test]
     fn test_keep_unmatched_as_words() {
         let text = " 南京市长江大桥, hello world ";
-        let dict = ForwardDictionary::new(
+        let dict = Dictionary::new(
             vec!["南京", "南京市", "市长", "长江", "大桥", "你好世界"]
         ).unwrap();
 
@@ -221,7 +221,7 @@ mod tests {
     #[test]
     fn test_value() {
         let text = " 南京市长江大桥, hello world ";
-        let dict = ForwardDictionary::new(
+        let dict = Dictionary::new(
             vec![
                 "南京",
                 "南京市",

@@ -41,7 +41,7 @@ fn bench_segment_forward_longest(c: &mut Criterion) {
     });
 
     group.bench_function("hashmap", |b| {
-        let dict = hashmap::ForwardDictionary::new(
+        let dict = hashmap::Dictionary::new(
             patterns.clone()
         ).unwrap();
 

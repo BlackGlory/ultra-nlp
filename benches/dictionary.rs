@@ -49,17 +49,9 @@ fn bench_dictionary(c: &mut Criterion) {
         });
     });
 
-    group.bench_function("hashmap_forward_dictionary", |b| {
+    group.bench_function("hashmap_dictionary", |b| {
         b.iter(|| {
-            hashmap::ForwardDictionary::new(
-                black_box(patterns.clone())
-            ).unwrap();
-        });
-    });
-
-    group.bench_function("hashmap_backward_dictionary", |b| {
-        b.iter(|| {
-            hashmap::BackwardDictionary::new(
+            hashmap::Dictionary::new(
                 black_box(patterns.clone())
             ).unwrap();
         });
