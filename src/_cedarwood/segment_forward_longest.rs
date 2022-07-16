@@ -19,8 +19,7 @@ pub fn segment_forward_longest<T: AsRef<str>>(
 
     let mut results: Vec<Match> = vec![];
 
-    let mut unconsumed_word_start_index: Option<usize> = None;
-    let mut unconsumed_char_start_index: Option<usize> = None;
+    let mut unconsumed_start_index: Option<usize> = None;
     let mut maximum_matched_end_index = 0;
     let mut start_index = 0;
     while start_index < text.len() {
@@ -67,18 +66,18 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                 BehaviorForUnmatched::KeepAsWords => {
                     if matched_results.len() > 0 {
                         // 将之前未消耗的word作为Match提交
-                        if let Some(index) = unconsumed_word_start_index {
+                        if let Some(index) = unconsumed_start_index {
                             let result = Match::new(
                                 TextRange::new(index, start_index),
                                 None,
                             );
                             unmatched_results.push(result);
-                            unconsumed_word_start_index = None;
+                            unconsumed_start_index = None;
                         }
                     } else {
                         if start_index >= maximum_matched_end_index {
-                            if let None = unconsumed_word_start_index {
-                                unconsumed_word_start_index = Some(start_index);
+                            if let None = unconsumed_start_index {
+                                unconsumed_start_index = Some(start_index);
                             }
                         }
                     }
@@ -86,18 +85,18 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                 BehaviorForUnmatched::KeepAsChars => {
                     if matched_results.len() > 0 {
                         // 将之前未消耗的char作为Match提交
-                        if let Some(index) = unconsumed_char_start_index {
+                        if let Some(index) = unconsumed_start_index {
                             let result = Match::new(
                                 TextRange::new(index, start_index),
                                 None,
                             );
                             unmatched_results.push(result);
-                            unconsumed_char_start_index = None;
+                            unconsumed_start_index = None;
                         }
                     } else {
                         if start_index >= maximum_matched_end_index {
-                            if let None = unconsumed_char_start_index {
-                                unconsumed_char_start_index = Some(start_index);
+                            if let None = unconsumed_start_index {
+                                unconsumed_start_index = Some(start_index);
                             }
                         }
                     }

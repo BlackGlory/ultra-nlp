@@ -76,7 +76,7 @@ mod tests {
     #[test]
     fn test_should_returns_forward_longest_results() {
         let text = " 当下雨天地面积水, hello world ";
-        let dict = vec![
+        let patterns = vec![
             "当",
             "当下",
             "下雨",
@@ -87,10 +87,10 @@ mod tests {
             "你好世界",
         ];
         let forward_dict = ForwardDictionary::new(
-            dict.clone()
+            patterns.clone()
         ).unwrap();
         let backward_dict = BackwardDictionary::new(
-            dict.clone()
+            patterns.clone()
         ).unwrap();
 
         // 正向结果: [当下, 雨天, 地面, 积水]
@@ -115,12 +115,12 @@ mod tests {
     #[test]
     fn test_should_returns_backward_longest_results() {
         let text = " 商品和服务, hello world ";
-        let dict = vec!["商品", "和服", "服务", "你好世界"];
+        let patterns = vec!["商品", "和服", "服务", "你好世界"];
         let forward_dict = ForwardDictionary::new(
-            dict.clone()
+            patterns.clone()
         ).unwrap();
         let backward_dict = BackwardDictionary::new(
-            dict.clone()
+            patterns.clone()
         ).unwrap();
 
         // 正向结果: [商品, 和服]
@@ -145,12 +145,12 @@ mod tests {
     #[test]
     fn test_ignore_unmatched() {
         let text = " 商品和服务, hello world ";
-        let dict = vec!["商品", "和服", "服务", "你好世界"];
+        let patterns = vec!["商品", "和服", "服务", "你好世界"];
         let forward_dict = ForwardDictionary::new(
-            dict.clone()
+            patterns.clone()
         ).unwrap();
         let backward_dict = BackwardDictionary::new(
-            dict.clone()
+            patterns.clone()
         ).unwrap();
 
         let result = segment_bidirectional_longest(
@@ -172,12 +172,12 @@ mod tests {
     #[test]
     fn test_keep_unmatched_as_chars() {
         let text = " 商品和服务, hello world ";
-        let dict = vec!["商品", "和服", "服务", "你好世界"];
+        let patterns = vec!["商品", "和服", "服务", "你好世界"];
         let forward_dict = ForwardDictionary::new(
-            dict.clone()
+            patterns.clone()
         ).unwrap();
         let backward_dict = BackwardDictionary::new(
-            dict.clone()
+            patterns.clone()
         ).unwrap();
 
         let result = segment_bidirectional_longest(
@@ -218,7 +218,7 @@ mod tests {
     #[test]
     fn test_keep_unmatched_as_words() {
         let text = " 当下雨天地面积水, hello world ";
-        let dict = vec![
+        let patterns = vec![
             "当",
             "当下",
             "下雨",
@@ -229,10 +229,10 @@ mod tests {
             "你好世界",
         ];
         let forward_dict = ForwardDictionary::new(
-            dict.clone()
+            patterns.clone()
         ).unwrap();
         let backward_dict = BackwardDictionary::new(
-            dict.clone()
+            patterns.clone()
         ).unwrap();
 
         let result = segment_bidirectional_longest(
@@ -254,7 +254,7 @@ mod tests {
     #[test]
     fn test_value() {
         let text = " 当下雨天地面积水, hello world ";
-        let dict: Vec<&str> = vec![
+        let patterns: Vec<&str> = vec![
             "当",
             "当下",
             "下雨",
@@ -265,11 +265,12 @@ mod tests {
             "你好世界",
         ];
         let forward_dict = ForwardDictionary::new(
-            dict.clone()
+            patterns.clone()
         ).unwrap();
         let backward_dict = BackwardDictionary::new(
-            dict.clone()
+            patterns.clone()
         ).unwrap();
+
         // 正向结果: [当下, 雨天, 地面, 积水]
         // 逆向结果: [当, 下雨天, 地面, 积水]
         // 结果数量相同, 单字数量正向结果少于逆向结果, 返回单字数量更少的正向结果.
