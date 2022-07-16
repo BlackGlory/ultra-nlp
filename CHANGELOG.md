@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.6.1 (2022-07-16)
+- Fixed an edge case about checking pattern uniqueness.
+- Added `crate::hashmap`.
+
 ## 0.6.0 (2022-07-15)
 - Added `Match::index_of_patterns()` method.
 - Added `Match::value_from()` method.
