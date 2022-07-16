@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion, black_box};
-use ultra_nlp::{daachorse, cedarwood, BehaviorForUnmatched};
+use ultra_nlp::{daachorse, cedarwood, hashmap, BehaviorForUnmatched};
 
 criterion_group!(benches, bench_segment_forward_longest);
 criterion_main!(benches);
@@ -33,6 +33,20 @@ fn bench_segment_forward_longest(c: &mut Criterion) {
 
         b.iter(|| {
             cedarwood::segment_forward_longest(
+                black_box(text),
+                black_box(&dict),
+                black_box(BehaviorForUnmatched::Ignore),
+            );
+        });
+    });
+
+    group.bench_function("hashmap", |b| {
+        let dict = hashmap::ForwardDictionary::new(
+            patterns.clone()
+        ).unwrap();
+
+        b.iter(|| {
+            hashmap::segment_forward_longest(
                 black_box(text),
                 black_box(&dict),
                 black_box(BehaviorForUnmatched::Ignore),
