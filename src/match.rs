@@ -3,6 +3,10 @@ use crate::TextRange;
 #[derive(Debug, Clone, PartialEq)]
 pub struct Match {
     range: TextRange,
+
+    /**
+     * 在保留未匹配内容的情况下, 匹配到的内容有可能不在字典里.
+     */
     index_of_patterns: Option<u32>,
 }
 
