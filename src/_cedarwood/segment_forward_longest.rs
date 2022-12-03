@@ -122,15 +122,17 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                 ))
             },
             BehaviorForUnmatched::KeepAsChars => {
-                for range in split_as_char_ranges(&text[maximum_matched_end_index..]) {
-                    results.push(Match::new(
-                        TextRange::new(
-                            maximum_matched_end_index + range.start_index(),
-                            maximum_matched_end_index + range.end_index(),
-                        ),
-                        None
-                    ))
-                }
+                split_as_char_ranges(&text[maximum_matched_end_index..])
+                    .into_iter()
+                    .for_each(|range| {
+                        results.push(Match::new(
+                            TextRange::new(
+                                maximum_matched_end_index + range.start_index(),
+                                maximum_matched_end_index + range.end_index(),
+                            ),
+                            None
+                        ))
+                    })
             }
             BehaviorForUnmatched::Ignore => (),
         }

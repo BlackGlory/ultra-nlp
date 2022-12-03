@@ -79,16 +79,18 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                     if matched_results.len() > 0 {
                         // 将之前未消耗的char作为Match提交
                         if let Some(index) = unconsumed_end_index {
-                            for range in split_as_char_ranges(&text[end_index..index]) {
-                                let result = Match::new(
-                                    TextRange::new(
-                                        end_index + range.start_index(),
-                                        end_index + range.end_index(),
-                                    ),
-                                    None,
-                                );
-                                unmatched_results.push(result);
-                            }
+                            split_as_char_ranges(&text[end_index..index])
+                                .into_iter()
+                                .for_each(|range| {
+                                    let result = Match::new(
+                                        TextRange::new(
+                                            end_index + range.start_index(),
+                                            end_index + range.end_index(),
+                                        ),
+                                        None,
+                                    );
+                                    unmatched_results.push(result);
+                                });
                             unmatched_results.reverse();
                             unconsumed_end_index = None;
                         }
@@ -124,17 +126,17 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                 ))
             },
             BehaviorForUnmatched::KeepAsChars => {
-                for range in split_as_char_ranges(
-                    &text[0..minimum_matched_start_index]
-                ) {
-                    results.push(Match::new(
-                        TextRange::new(
-                            range.start_index(),
-                            range.end_index(),
-                        ),
-                        None
-                    ))
-                }
+                split_as_char_ranges(&text[0..minimum_matched_start_index])
+                    .into_iter()
+                    .for_each(|range| {
+                        results.push(Match::new(
+                            TextRange::new(
+                                range.start_index(),
+                                range.end_index(),
+                            ),
+                            None
+                        ))
+                    })
             }
             BehaviorForUnmatched::Ignore => (),
         }

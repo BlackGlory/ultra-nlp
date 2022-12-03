@@ -93,16 +93,18 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                     if matched_results.len() > 0 {
                         // 将之前未消耗的char作为Match提交
                         if let Some(index) = unconsumed_start_index {
-                            for range in split_as_char_ranges(&text[index..start_index]) {
-                                let result = Match::new(
-                                    TextRange::new(
-                                        text.len() - (index + range.end_index()),
-                                        text.len() - (index + range.start_index()),
-                                    ),
-                                    None,
-                                );
-                                unmatched_results.push(result);
-                            }
+                            split_as_char_ranges(&text[index..start_index])
+                                .into_iter()
+                                .for_each(|range| {
+                                    let result = Match::new(
+                                        TextRange::new(
+                                            text.len() - (index + range.end_index()),
+                                            text.len() - (index + range.start_index()),
+                                        ),
+                                        None,
+                                    );
+                                    unmatched_results.push(result);
+                                });
                             unconsumed_start_index = None;
                         }
                     } else {
@@ -137,17 +139,17 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                 ))
             },
             BehaviorForUnmatched::KeepAsChars => {
-                for range in split_as_char_ranges(
-                    &text[maximum_matched_end_index..]
-                ) {
-                    results.push(Match::new(
-                        TextRange::new(
-                            text.len() - (maximum_matched_end_index + range.end_index()),
-                            text.len() - (maximum_matched_end_index + range.start_index()),
-                        ),
-                        None
-                    ))
-                }
+                split_as_char_ranges(&text[maximum_matched_end_index..])
+                    .into_iter()
+                    .for_each(|range| {
+                        results.push(Match::new(
+                            TextRange::new(
+                                text.len() - (maximum_matched_end_index + range.end_index()),
+                                text.len() - (maximum_matched_end_index + range.start_index()),
+                            ),
+                            None
+                        ))
+                    })
             }
             BehaviorForUnmatched::Ignore => (),
         }
