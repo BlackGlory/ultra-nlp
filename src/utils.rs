@@ -1,17 +1,15 @@
 use crate::TextRange;
-use rayon::prelude::*;
 
 pub fn split_as_char_ranges(
     text: &str
-) -> Vec<TextRange> {
+) -> impl Iterator<Item = TextRange> + '_ {
     text
-        .par_char_indices()
+        .char_indices()
         .map(|(start_index, char)| {
             let end_index = start_index + char.len_utf8();
 
             TextRange::new(start_index, end_index)
         })
-        .collect()
 }
 
 #[cfg(test)]
@@ -22,7 +20,7 @@ mod tests {
     fn test_split_as_char_ranges() {
         let text = " 你好世界, hello world ";
 
-        let result = split_as_char_ranges(&text);
+        let result = split_as_char_ranges(&text).collect::<Vec<_>>();
 
         assert_eq!(
             result.iter()

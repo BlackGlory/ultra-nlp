@@ -44,11 +44,9 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                                 );
                             },
                             BehaviorForUnmatched::KeepAsChars => {
-                                split_as_char_ranges(
+                                for range in split_as_char_ranges(
                                     &text[start_index..start_index + mat.start()]
-                                )
-                                    .into_iter()
-                                    .for_each(|range| {
+                                ) {
                                     let result = Match::new(
                                         TextRange::new(
                                             start_index + range.start_index(),
@@ -57,7 +55,7 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                                         None,
                                     );
                                     results.push(result);
-                                })
+                                }
                             },
                         }
                     }
@@ -82,18 +80,18 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                             );
                         },
                         BehaviorForUnmatched::KeepAsChars => {
-                            split_as_char_ranges(&text[start_index..])
-                                .into_iter()
-                                .for_each(|range| {
-                                    let result = Match::new(
-                                        TextRange::new(
-                                            start_index + range.start_index(),
-                                            start_index + range.end_index(),
-                                        ),
-                                        None,
-                                    );
-                                    results.push(result);
-                                })
+                            for range in split_as_char_ranges(
+                                &text[start_index..]
+                            ) {
+                                let result = Match::new(
+                                    TextRange::new(
+                                        start_index + range.start_index(),
+                                        start_index + range.end_index(),
+                                    ),
+                                    None,
+                                );
+                                results.push(result);
+                            }
                         },
                     }
 

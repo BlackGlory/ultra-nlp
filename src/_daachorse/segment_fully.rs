@@ -45,11 +45,11 @@ pub fn segment_fully<T: AsRef<str>>(
                             );
                         },
                         BehaviorForUnmatched::KeepAsChars => {
-                            split_as_char_ranges(&text[maximum_matched_end_index..mat.start()])
-                                .into_iter()
-                                .for_each(|range| {
-                                    results.push(Match::new(range, None));
-                                })
+                            for range in split_as_char_ranges(
+                                &text[maximum_matched_end_index..mat.start()]
+                            ) {
+                                results.push(Match::new(range, None));
+                            }
                         },
                     }
 
@@ -77,18 +77,18 @@ pub fn segment_fully<T: AsRef<str>>(
                         ))
                     },
                     BehaviorForUnmatched::KeepAsChars => {
-                        split_as_char_ranges(&text[maximum_matched_end_index..])
-                            .into_iter()
-                            .for_each(|range| {
-                                let result = Match::new(
-                                    TextRange::new(
-                                        maximum_matched_end_index + range.start_index(),
-                                        maximum_matched_end_index + range.end_index(),
-                                    ),
-                                    None,
-                                );
-                                results.push(result);
-                            })
+                        for range in split_as_char_ranges(
+                            &text[maximum_matched_end_index..]
+                        ) {
+                            let result = Match::new(
+                                TextRange::new(
+                                    maximum_matched_end_index + range.start_index(),
+                                    maximum_matched_end_index + range.end_index(),
+                                ),
+                                None,
+                            );
+                            results.push(result);
+                        }
                     },
                     BehaviorForUnmatched::Ignore => panic!("Rust is stupid."),
                 }
