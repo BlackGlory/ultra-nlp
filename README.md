@@ -9,7 +9,7 @@ let result = ngrams(text, 2);
 assert_eq!(
     result
         .into_iter()
-        .collect::<Vec<String>>(),
+        .collect::<Vec<&str>>(),
     vec!["你好", "好世", "世界"]
 );
 ```
