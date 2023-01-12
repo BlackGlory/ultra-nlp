@@ -20,7 +20,12 @@ let text = "foo中文bar字符baz";
 
 let result = extract_consecutive_chinese_chars(text);
 
-assert_eq!(result, vec!["中文", "字符"]);
+assert_eq!(
+    result
+        .into_iter()
+        .collect::<Vec<&str>>(),
+    vec!["中文", "字符"]
+);
 ```
 
 ### cedarwood(slow, low memory usage)
