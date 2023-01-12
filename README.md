@@ -1,5 +1,28 @@
 # ultra-nlp
 ## Usage
+### ngram
+```rs
+let text = "你好世界";
+
+let result = ngram(text, 2);
+
+assert_eq!(
+    result
+        .into_iter()
+        .collect::<Vec<String>>(),
+    vec!["你好", "好世", "世界"]
+);
+```
+
+### extract_consecutive_chinese_chars
+```rs
+let text = "foo中文bar字符baz";
+
+let result = extract_consecutive_chinese_chars(text);
+
+assert_eq!(result, vec!["中文", "字符"]);
+```
+
 ### cedarwood(slow, low memory usage)
 #### Ingore unmatched contents
 ```rs
