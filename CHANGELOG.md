@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.7.0 (2023-01-12)
+- Rewritten `ngrams`
+
+### ⚠ BREAKING CHANGES
+- The return value of `ngrams` is changed from `impl Iterator<Item = String>` to `impl Iterator<Item = &str>`.
+
 ## 0.6.3 (2023-01-12)
 - Added `crate::extract_consecutive_chinese_chars`.
 - Added `crate::ngrams`.
