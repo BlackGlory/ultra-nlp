@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.6.3 (2023-01-12)
+- Added `crate::extract_consecutive_chinese_chars`.
+- Added `crate::ngrams`.
+
 ## 0.6.2 (2022-07-17)
 - Fixed the edge case about chars on the edge.
 
