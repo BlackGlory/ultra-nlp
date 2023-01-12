@@ -1,10 +1,10 @@
 # ultra-nlp
 ## Usage
-### ngram
+### ngrams
 ```rs
 let text = "你好世界";
 
-let result = ngram(text, 2);
+let result = ngrams(text, 2);
 
 assert_eq!(
     result

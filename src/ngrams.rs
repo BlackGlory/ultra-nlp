@@ -39,7 +39,7 @@ impl Iterator for NgramsIterator {
 
 #[cfg(test)]
 mod tests {
-    mod ngram {
+    mod ngrams {
         use crate::ngrams::ngrams;
 
         #[test]
