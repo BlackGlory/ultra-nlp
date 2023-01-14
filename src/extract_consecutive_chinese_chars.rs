@@ -6,7 +6,8 @@ pub fn extract_consecutive_chinese_chars(text: &str) -> impl Iterator<Item = &st
         static ref RE: Regex = Regex::new(r"[^\p{Script=Han}]+").unwrap();
     }
 
-    let result = RE.split(text)
+    let result = RE
+        .split(text)
         .filter(|x| !x.is_empty());
 
     result

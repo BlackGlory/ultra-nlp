@@ -104,7 +104,9 @@ fn prepare_patterns_for_dictionary<
         .into_iter()
         .enumerate()
         .map(|(i, pattern)| -> Result<(String, u32), _>{
-            let pattern = pattern.as_ref().to_lowercase();
+            let pattern = pattern
+                .as_ref()
+                .to_lowercase();
 
             let value = u32::try_from(i)
                 .map_err(|err| UltraNLPError::new(err.to_string()))?;

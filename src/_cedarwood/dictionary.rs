@@ -16,7 +16,7 @@ pub struct BackwardDictionary {
 }
 
 impl ForwardDictionary {
-    pub fn new<T: AsRef<str>, I: IntoIterator<Item = T> + Clone>(
+    pub fn new<T: AsRef<str>, I: IntoIterator<Item = T>>(
         patterns: I
     ) -> UltraNLPResult<Self> {
         let patterns_with_values = prepare_patterns_for_dictionary(patterns)?;
@@ -25,13 +25,11 @@ impl ForwardDictionary {
         }
 
         let patterns = patterns_with_values
-            .clone()
-            .into_iter()
+            .iter()
             .map(|(x, _)| x);
         if !is_unique(patterns) {
             return Err(UltraNLPError::new("The patterns are not unique"));
         }
-
 
         let dat = create_dat_with_values(patterns_with_values);
 
@@ -40,7 +38,7 @@ impl ForwardDictionary {
 }
 
 impl BackwardDictionary {
-    pub fn new<T: AsRef<str>, I: IntoIterator<Item = T> + Clone>(
+    pub fn new<T: AsRef<str>, I: IntoIterator<Item = T>>(
         patterns: I
     ) -> UltraNLPResult<Self> {
         let patterns_with_values = prepare_patterns_for_dictionary(patterns)?;
@@ -49,8 +47,7 @@ impl BackwardDictionary {
         }
 
         let patterns = patterns_with_values
-            .clone()
-            .into_iter()
+            .iter()
             .map(|(x, _)| x);
         if !is_unique(patterns) {
             return Err(UltraNLPError::new("The patterns are not unique"));

@@ -12,7 +12,9 @@ pub fn segment_backward_longest<T: AsRef<str>>(
     dict: &Dictionary,
     behavior_for_unmatched: BehaviorForUnmatched,
 ) -> Vec<Match> {
-    let text = text.as_ref().to_lowercase();
+    let text = text
+        .as_ref()
+        .to_lowercase();
 
     let mut results: Vec<Match> = vec![];
 
@@ -190,7 +192,7 @@ mod tests {
 
         assert_eq!(
             result
-                .iter()
+                .into_iter()
                 .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec![
@@ -231,7 +233,7 @@ mod tests {
 
         assert_eq!(
             result
-                .iter()
+                .into_iter()
                 .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec![
@@ -264,7 +266,7 @@ mod tests {
 
         assert_eq!(
             result
-                .iter()
+                .into_iter()
                 .map(|x| x.index_of_patterns().unwrap())
                 .collect::<Vec<_>>(),
             vec![0, 2]
@@ -286,7 +288,7 @@ mod tests {
 
         assert_eq!(
             result
-                .iter()
+                .into_iter()
                 .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec!["你好", "世界"]

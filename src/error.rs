@@ -8,7 +8,9 @@ pub struct UltraNLPError {
 
 impl UltraNLPError {
     pub fn new<T: AsRef<str>>(message: T) -> Self {
-        let message = message.as_ref().to_string();
+        let message = message
+            .as_ref()
+            .to_string();
 
         Self { message }
     }

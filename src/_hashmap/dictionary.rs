@@ -10,7 +10,7 @@ pub struct Dictionary {
 }
 
 impl Dictionary {
-    pub fn new<T: AsRef<str>, I: IntoIterator<Item = T> + Clone>(
+    pub fn new<T: AsRef<str>, I: IntoIterator<Item = T>>(
         patterns: I
     ) -> UltraNLPResult<Self> {
         let patterns_with_values = prepare_patterns_for_dictionary(patterns)?;
@@ -41,7 +41,9 @@ fn prepare_patterns_for_dictionary<
         .into_iter()
         .enumerate()
         .map(|(index, pattern)| -> Result<(String, u32), _>{
-            let pattern = pattern.as_ref().to_lowercase();
+            let pattern = pattern
+                .as_ref()
+                .to_lowercase();
 
             let value = u32::try_from(index)
                 .map_err(|err| UltraNLPError::new(err.to_string()))?;
@@ -68,7 +70,8 @@ mod tests {
     fn test_patterns() {
         let patterns: Vec<&str> = vec!["foo", "bar"];
 
-        Dictionary::new(patterns).unwrap();
+        Dictionary::new(patterns)
+            .unwrap();
     }
 
     #[test]

@@ -23,7 +23,8 @@ mod tests {
         let result = split_as_char_ranges(&text).collect::<Vec<_>>();
 
         assert_eq!(
-            result.iter()
+            result
+                .into_iter()
                 .map(|x| x.extract(text))
                 .collect::<Vec<_>>(),
             vec![

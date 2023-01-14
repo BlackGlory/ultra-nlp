@@ -34,8 +34,8 @@ pub fn segment_backward_longest<T: AsRef<str>>(
             if let Some(matches) = dict.dat.common_prefix_search(
                 &text[start_index..]
             ) {
-                let longest_match: Option<&(i32, usize)> = matches
-                    .iter()
+                let longest_match: Option<(i32, usize)> = matches
+                    .into_iter()
                     .reduce(| longest, current | {
                         let (_, longest_length) = longest;
                         let (_, current_length) = current;
@@ -46,13 +46,13 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                         }
                     });
 
-                if let Some((id, length)) = longest_match{
+                if let Some((id, length)) = longest_match {
                     let end_index = start_index + length + 1;
                     let range = TextRange::new(
                         text.len() - end_index,
                         text.len() - start_index,
                     );
-                    let value = u32::try_from(*id)
+                    let value = u32::try_from(id)
                         .map_err(|err| UltraNLPError::new(err.to_string()))
                         // 没有使用负数值, 且u32的最大值大于i32, 转换应当总是能成功
                         .unwrap();
@@ -181,7 +181,7 @@ mod tests {
 
         assert_eq!(
             result
-                .iter()
+                .into_iter()
                 .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec!["商品", "服务",]
@@ -203,7 +203,7 @@ mod tests {
 
         assert_eq!(
             result
-                .iter()
+                .into_iter()
                 .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec![
@@ -244,7 +244,7 @@ mod tests {
 
         assert_eq!(
             result
-                .iter()
+                .into_iter()
                 .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec![
@@ -277,7 +277,7 @@ mod tests {
 
         assert_eq!(
             result
-                .iter()
+                .into_iter()
                 .map(|x| x.index_of_patterns().unwrap())
                 .collect::<Vec<_>>(),
             vec![0, 2]
@@ -299,7 +299,7 @@ mod tests {
 
         assert_eq!(
             result
-                .iter()
+                .into_iter()
                 .map(|x| x.range().extract(text))
                 .collect::<Vec<_>>(),
             vec!["你好", "世界"]
