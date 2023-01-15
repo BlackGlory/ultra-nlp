@@ -3,7 +3,7 @@ use regex::Regex;
 
 pub fn extract_consecutive_chinese_chars(text: &str) -> impl Iterator<Item = &str>{
     lazy_static! {
-        static ref RE: Regex = Regex::new(r"[^\p{Script=Han}]+").unwrap();
+        static ref RE: Regex = Regex::new(r"\P{Script=Han}+").unwrap();
     }
 
     let result = RE
@@ -20,7 +20,7 @@ mod tests {
 
         #[test]
         fn test_extract_chinese_chars() {
-            let text = "foo中文bar字符baz";
+            let text = "foo中文，bar,字符baz";
 
             let result = extract_consecutive_chinese_chars(text);
 
