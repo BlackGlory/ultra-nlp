@@ -8,6 +8,7 @@ mod utils;
 mod error;
 mod ngrams;
 mod extract_consecutive_chinese_chars;
+mod extract_consecutive_letters;
 
 pub use r#match::*;
 pub use text_range::*;
@@ -15,6 +16,7 @@ pub use behavior_for_unmatched::*;
 pub use error::*;
 pub use ngrams::*;
 pub use extract_consecutive_chinese_chars::*;
+pub use extract_consecutive_letters::*;
 
 pub mod daachorse {
     pub use crate::_daachorse::*;
