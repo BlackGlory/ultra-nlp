@@ -28,6 +28,20 @@ assert_eq!(
 );
 ```
 
+### extract_consecutive_letters
+```rs
+let text = "foo中文，bar,字符baz";
+
+let result = extract_consecutive_letters(text);
+
+assert_eq!(
+    result
+        .into_iter()
+        .collect::<Vec<&str>>(),
+    vec!["foo中文", "bar", "字符baz"]
+);
+```
+
 ### cedarwood(slow, low memory usage)
 #### Ingore unmatched contents
 ```rs
