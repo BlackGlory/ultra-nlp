@@ -4,9 +4,7 @@ use crate::TextRange;
 pub struct Match {
     range: TextRange,
 
-    /**
-     * 在保留未匹配内容的情况下, 匹配到的内容有可能不在字典里.
-     */
+    // 在保留未匹配内容的情况下, 匹配到的内容有可能不在字典里.
     index_of_patterns: Option<u32>,
 }
 
@@ -23,9 +21,7 @@ impl Match {
         self.index_of_patterns
     }
 
-    /**
-     * A shortcut to get value from map by the index of patterns
-     */
+    /// A shortcut to get value from map by the index of patterns
     pub fn value_from<T: Copy>(&self, map: Vec<T>) -> Option<T> {
         match self.index_of_patterns {
             Some(index) => {
