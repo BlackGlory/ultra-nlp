@@ -31,9 +31,7 @@ pub fn segment_backward_longest<T: AsRef<str>>(
 
             let mut matched_results: Vec<Match> = vec![];
             // 注意, 虽然不知道这个Option的意义, 但Option是Some不代表matches非空.
-            if let Some(matches) = dict.dat.common_prefix_search(
-                &text[start_index..]
-            ) {
+            if let Some(matches) = dict.dat.common_prefix_search(&text[start_index..]) {
                 let longest_match: Option<(i32, usize)> = matches
                     .into_iter()
                     .reduce(| longest, current | {
@@ -65,56 +63,64 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                 }
             }
 
-            let mut unmatched_results: Vec<Match> = vec![];
-            match behavior_for_unmatched {
-                BehaviorForUnmatched::KeepAsWords => {
-                    if matched_results.len() > 0 {
-                        // 将之前未消耗的word作为Match提交
-                        if let Some(index) = unconsumed_start_index {
-                            let result = Match::new(
-                                TextRange::new(
-                                    text.len() - start_index,
-                                    text.len() - index,
-                                ),
-                                None,
-                            );
-                            unmatched_results.push(result);
-                            unconsumed_start_index = None;
-                        }
-                    } else {
-                        if start_index >= maximum_matched_end_index {
-                            if let None = unconsumed_start_index {
-                                unconsumed_start_index = Some(start_index);
-                            }
-                        }
-                    }
-                },
-                BehaviorForUnmatched::KeepAsChars => {
-                    if matched_results.len() > 0 {
-                        // 将之前未消耗的char作为Match提交
-                        if let Some(index) = unconsumed_start_index {
-                            for range in split_as_char_ranges(&text[index..start_index]) {
+            let mut unmatched_results: Vec<Match> = {
+                let mut unmatched_results: Vec<Match> = vec![];
+
+                match behavior_for_unmatched {
+                    BehaviorForUnmatched::KeepAsWords => {
+                        if matched_results.len() > 0 {
+                            // 将之前未消耗的word作为Match提交
+                            if let Some(index) = unconsumed_start_index {
                                 let result = Match::new(
                                     TextRange::new(
-                                        text.len() - (index + range.end_index()),
-                                        text.len() - (index + range.start_index()),
+                                        text.len() - start_index,
+                                        text.len() - index,
                                     ),
                                     None,
                                 );
                                 unmatched_results.push(result);
+                                unconsumed_start_index = None;
                             }
-                            unconsumed_start_index = None;
-                        }
-                    } else {
-                        if start_index >= maximum_matched_end_index {
-                            if let None = unconsumed_start_index {
-                                unconsumed_start_index = Some(start_index);
+                        } else {
+                            if start_index >= maximum_matched_end_index {
+                                if let None = unconsumed_start_index {
+                                    unconsumed_start_index = Some(start_index);
+                                }
                             }
                         }
-                    }
-                },
-                BehaviorForUnmatched::Ignore => (),
-            }
+                    },
+                    BehaviorForUnmatched::KeepAsChars => {
+                        if matched_results.len() > 0 {
+                            // 将之前未消耗的char作为Match提交
+                            if let Some(index) = unconsumed_start_index {
+                                let iter = split_as_char_ranges(&text[index..start_index])
+                                    .into_iter()
+                                    .map(|range| {
+                                        Match::new(
+                                            TextRange::new(
+                                                text.len() - (index + range.end_index()),
+                                                text.len() - (index + range.start_index()),
+                                            ),
+                                            None,
+                                        )
+                                    });
+
+                                unmatched_results.extend(iter);
+                                unconsumed_start_index = None;
+                            }
+                        } else {
+                            if start_index >= maximum_matched_end_index {
+                                if let None = unconsumed_start_index {
+                                    unconsumed_start_index = Some(start_index);
+                                }
+                            }
+                        }
+                    },
+                    BehaviorForUnmatched::Ignore => (),
+                }
+
+                unmatched_results
+            };
 
             results.append(&mut unmatched_results);
             results.append(&mut matched_results);
@@ -137,17 +143,19 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                 ))
             },
             BehaviorForUnmatched::KeepAsChars => {
-                for range in split_as_char_ranges(
-                    &text[maximum_matched_end_index..]
-                ) {
-                    results.push(Match::new(
-                        TextRange::new(
-                            text.len() - (maximum_matched_end_index + range.end_index()),
-                            text.len() - (maximum_matched_end_index + range.start_index()),
-                        ),
-                        None
-                    ))
-                }
+                let iter = split_as_char_ranges(&text[maximum_matched_end_index..])
+                    .into_iter()
+                    .map(|range| {
+                        Match::new(
+                            TextRange::new(
+                                text.len() - (maximum_matched_end_index + range.end_index()),
+                                text.len() - (maximum_matched_end_index + range.start_index()),
+                            ),
+                            None
+                        )
+                    });
+
+                results.extend(iter);
             }
             BehaviorForUnmatched::Ignore => (),
         }
