@@ -30,15 +30,18 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                 usize, // start_index
                 u32, // value
             )> = None;
-            for start_index in (0..end_index).rev() {
-                if text.is_char_boundary(start_index) {
-                    let sub_text = &text[start_index..end_index];
+            (0..end_index)
+                .rev()
+                .into_iter()
+                .for_each(|start_index| {
+                    if text.is_char_boundary(start_index) {
+                        let sub_text = &text[start_index..end_index];
 
-                    if let Some(value) = dict.map.get(sub_text) {
-                        longest_match = Some((start_index, *value))
+                        if let Some(value) = dict.map.get(sub_text) {
+                            longest_match = Some((start_index, *value))
+                        }
                     }
-                }
-            }
+                });
 
             if let Some((start_index, value)) = longest_match {
                 let range = TextRange::new(
@@ -53,57 +56,64 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                 minimum_matched_start_index = start_index;
             }
 
-            let mut unmatched_results: Vec<Match> = vec![];
-            match behavior_for_unmatched {
-                BehaviorForUnmatched::KeepAsWords => {
-                    if matched_results.len() > 0 {
-                        // 将之前未消耗的word作为Match提交
-                        if let Some(index) = unconsumed_end_index {
-                            let result = Match::new(
-                                TextRange::new(
-                                    end_index,
-                                    index,
-                                ),
-                                None,
-                            );
-                            unmatched_results.push(result);
-                            unconsumed_end_index = None;
-                        }
-                    } else {
-                        if end_index <= minimum_matched_start_index {
-                            if let None = unconsumed_end_index {
-                                unconsumed_end_index = Some(end_index);
-                            }
-                        }
-                    }
-                },
-                BehaviorForUnmatched::KeepAsChars => {
-                    if matched_results.len() > 0 {
-                        // 将之前未消耗的char作为Match提交
-                        if let Some(index) = unconsumed_end_index {
-                            for range in split_as_char_ranges(&text[end_index..index]) {
+            let mut unmatched_results: Vec<Match> = {
+                let mut unmatched_results: Vec<Match> = vec![];
+
+                match behavior_for_unmatched {
+                    BehaviorForUnmatched::KeepAsWords => {
+                        if matched_results.len() > 0 {
+                            // 将之前未消耗的word作为Match提交
+                            if let Some(index) = unconsumed_end_index {
                                 let result = Match::new(
                                     TextRange::new(
-                                        end_index + range.start_index(),
-                                        end_index + range.end_index(),
+                                        end_index,
+                                        index,
                                     ),
                                     None,
                                 );
                                 unmatched_results.push(result);
+                                unconsumed_end_index = None;
                             }
-                            unmatched_results.reverse();
-                            unconsumed_end_index = None;
-                        }
-                    } else {
-                        if end_index >= minimum_matched_start_index {
-                            if let None = unconsumed_end_index {
-                                unconsumed_end_index = Some(end_index);
+                        } else {
+                            if end_index <= minimum_matched_start_index {
+                                if let None = unconsumed_end_index {
+                                    unconsumed_end_index = Some(end_index);
+                                }
                             }
                         }
-                    }
-                },
-                BehaviorForUnmatched::Ignore => (),
-            }
+                    },
+                    BehaviorForUnmatched::KeepAsChars => {
+                        if matched_results.len() > 0 {
+                            // 将之前未消耗的char作为Match提交
+                            if let Some(index) = unconsumed_end_index {
+                                let iter = split_as_char_ranges(&text[end_index..index])
+                                    .map(|range| {
+                                        Match::new(
+                                            TextRange::new(
+                                                end_index + range.start_index(),
+                                                end_index + range.end_index(),
+                                            ),
+                                            None,
+                                        )
+                                    });
+
+                                unmatched_results.extend(iter);
+                                unmatched_results.reverse();
+                                unconsumed_end_index = None;
+                            }
+                        } else {
+                            if end_index >= minimum_matched_start_index {
+                                if let None = unconsumed_end_index {
+                                    unconsumed_end_index = Some(end_index);
+                                }
+                            }
+                        }
+                    },
+                    BehaviorForUnmatched::Ignore => (),
+                }
+
+                unmatched_results
+            };
 
             results.append(&mut unmatched_results);
             results.append(&mut matched_results);
@@ -123,20 +133,21 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                         minimum_matched_start_index,
                     ),
                     None
-                ))
+                ));
             },
             BehaviorForUnmatched::KeepAsChars => {
-                for range in split_as_char_ranges(
-                    &text[0..minimum_matched_start_index]
-                ) {
-                    results.push(Match::new(
-                        TextRange::new(
-                            range.start_index(),
-                            range.end_index(),
-                        ),
-                        None
-                    ))
-                }
+                let iter = split_as_char_ranges(&text[0..minimum_matched_start_index])
+                    .map(|range| {
+                        Match::new(
+                            TextRange::new(
+                                range.start_index(),
+                                range.end_index(),
+                            ),
+                            None
+                        )
+                    });
+
+                results.extend(iter);
             }
             BehaviorForUnmatched::Ignore => (),
         }

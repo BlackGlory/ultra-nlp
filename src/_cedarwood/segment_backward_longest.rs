@@ -94,7 +94,6 @@ pub fn segment_backward_longest<T: AsRef<str>>(
                             // 将之前未消耗的char作为Match提交
                             if let Some(index) = unconsumed_start_index {
                                 let iter = split_as_char_ranges(&text[index..start_index])
-                                    .into_iter()
                                     .map(|range| {
                                         Match::new(
                                             TextRange::new(
@@ -144,7 +143,6 @@ pub fn segment_backward_longest<T: AsRef<str>>(
             },
             BehaviorForUnmatched::KeepAsChars => {
                 let iter = split_as_char_ranges(&text[maximum_matched_end_index..])
-                    .into_iter()
                     .map(|range| {
                         Match::new(
                             TextRange::new(

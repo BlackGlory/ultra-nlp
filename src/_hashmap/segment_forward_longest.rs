@@ -30,15 +30,17 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                 usize, // end_index
                 u32, // value
             )> = None;
-            for end_index in (start_index + 1)..=text.len() {
-                if text.is_char_boundary(end_index) {
-                    let sub_text = &text[start_index..end_index];
+            ((start_index + 1)..=text.len())
+                .into_iter()
+                .for_each(|end_index| {
+                    if text.is_char_boundary(end_index) {
+                        let sub_text = &text[start_index..end_index];
 
-                    if let Some(value) = dict.map.get(sub_text) {
-                        longest_match = Some((end_index, *value))
+                        if let Some(value) = dict.map.get(sub_text) {
+                            longest_match = Some((end_index, *value))
+                        }
                     }
-                }
-            }
+                });
 
             if let Some((end_index, value)) = longest_match{
                 let range = TextRange::new(
@@ -114,15 +116,18 @@ pub fn segment_forward_longest<T: AsRef<str>>(
                 ))
             },
             BehaviorForUnmatched::KeepAsChars => {
-                for range in split_as_char_ranges(&text[maximum_matched_end_index..]) {
-                    results.push(Match::new(
-                        TextRange::new(
-                            maximum_matched_end_index + range.start_index(),
-                            maximum_matched_end_index + range.end_index(),
-                        ),
-                        None
-                    ))
-                }
+                let iter = split_as_char_ranges(&text[maximum_matched_end_index..])
+                    .map(|range| {
+                        Match::new(
+                            TextRange::new(
+                                maximum_matched_end_index + range.start_index(),
+                                maximum_matched_end_index + range.end_index(),
+                            ),
+                            None
+                        )
+                    });
+
+                results.extend(iter);
             }
             BehaviorForUnmatched::Ignore => (),
         }

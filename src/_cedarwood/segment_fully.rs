@@ -18,28 +18,30 @@ pub fn segment_fully<T: AsRef<str>>(
     let mut unconsumed_word_start_index: Option<usize> = None;
     let mut unconsumed_char_start_index: Option<usize> = None;
     let mut maximum_matched_end_index = 0;
-    for start_index in 0..text.len() {
+    (0..text.len()).for_each(|start_index| {
         if text.is_char_boundary(start_index) {
             let mut matched_results: Vec<Match> = vec![];
             // 注意, 虽然不知道这个Option的意义, 但Option是Some不代表matches非空.
             if let Some(matches) = dict.dat.common_prefix_search(&text[start_index..]) {
-                for (id, length) in matches {
-                    let range = TextRange::new(
-                        start_index,
-                        start_index + length + 1
-                    );
-                    let value = u32::try_from(id)
-                        .map_err(|err| UltraNLPError::new(err.to_string()))
-                        // 没有使用负数值, 且u32的最大值大于i32, 转换应当总是能成功
-                        .unwrap();
+                matches
+                    .into_iter()
+                    .for_each(|(id, length)| {
+                        let range = TextRange::new(
+                            start_index,
+                            start_index + length + 1
+                        );
+                        let value = u32::try_from(id)
+                            .map_err(|err| UltraNLPError::new(err.to_string()))
+                            // 没有使用负数值, 且u32的最大值大于i32, 转换应当总是能成功
+                            .unwrap();
 
-                    let result = Match::new(range, Some(value));
-                    matched_results.push(result);
+                        let result = Match::new(range, Some(value));
+                        matched_results.push(result);
 
-                    if range.end_index() > maximum_matched_end_index {
-                        maximum_matched_end_index = range.end_index();
-                    }
-                }
+                        if range.end_index() > maximum_matched_end_index {
+                            maximum_matched_end_index = range.end_index();
+                        }
+                    });
             }
 
             let mut unmatched_results: Vec<Match> = {
@@ -93,7 +95,7 @@ pub fn segment_fully<T: AsRef<str>>(
             results.append(&mut unmatched_results);
             results.append(&mut matched_results);
         }
-    }
+    });
     if maximum_matched_end_index < text.len() {
         // 处理text剩余的文本
         match behavior_for_unmatched {
@@ -105,7 +107,6 @@ pub fn segment_fully<T: AsRef<str>>(
             },
             BehaviorForUnmatched::KeepAsChars => {
                 let iter = split_as_char_ranges(&text[maximum_matched_end_index..])
-                    .into_iter()
                     .map(|range| {
                         Match::new(
                             TextRange::new(

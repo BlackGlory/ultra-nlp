@@ -126,7 +126,6 @@ pub fn segment_forward_longest<T: AsRef<str>>(
             },
             BehaviorForUnmatched::KeepAsChars => {
                 let iter = split_as_char_ranges(&text[maximum_matched_end_index..])
-                    .into_iter()
                     .map(|range| {
                         Match::new(
                             TextRange::new(

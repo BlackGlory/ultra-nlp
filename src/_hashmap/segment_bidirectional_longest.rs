@@ -15,12 +15,12 @@ pub fn segment_bidirectional_longest<T: AsRef<str>>(
     behavior_for_unmatched: BehaviorForUnmatched,
 ) -> Vec<Match> {
     let forward_results = segment_forward_longest(
-        text.as_ref(),
+        &text,
         dict,
         behavior_for_unmatched,
     );
     let backward_results = segment_backward_longest(
-        text.as_ref(),
+        &text,
         dict,
         behavior_for_unmatched,
     );
@@ -32,11 +32,11 @@ pub fn segment_bidirectional_longest<T: AsRef<str>>(
     } else {
         let forward_single_chars_count = count_single_chars(
             &forward_results,
-            text.as_ref()
+            &text,
         );
         let backward_single_chars_count = count_single_chars(
             &backward_results,
-            text.as_ref()
+            &text,
         );
 
         if forward_single_chars_count < backward_single_chars_count {
@@ -47,19 +47,17 @@ pub fn segment_bidirectional_longest<T: AsRef<str>>(
     }
 }
 
-fn count_single_chars<T: AsRef<str>>(
-    results: &Vec<Match>,
-    text: T
-) -> usize {
-    let mut result = 0;
-
-    for mat in results {
-        if mat.range().extract(text.as_ref()).chars().count() == 1 {
-            result += 1;
-        }
-    }
-
-    result
+fn count_single_chars<T: AsRef<str>>(matches: &Vec<Match>, text: T) -> usize {
+    matches
+        .into_iter()
+        .map(|mat | {
+            if mat.range().extract(text.as_ref()).chars().count() == 1 {
+                1
+            } else {
+                0
+            }
+        })
+        .fold(0, |acc, cur| acc + cur)
 }
 
 #[cfg(test)]

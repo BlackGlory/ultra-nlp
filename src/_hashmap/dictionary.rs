@@ -19,13 +19,17 @@ impl Dictionary {
         }
 
         let mut map: HashMap<String, u32> = HashMap::new();
-        for (pattern, value) in patterns_with_values {
-            let result = map.insert(pattern, value);
+        patterns_with_values
+            .into_iter()
+            .try_for_each(|(pattern, value)| {
+                let result = map.insert(pattern, value);
 
-            if let Some(_) = result {
-                return Err(UltraNLPError::new("The patterns are not unique"));
-            }
-        }
+                if let Some(_) = result {
+                    Err(UltraNLPError::new("The patterns are not unique"))
+                } else {
+                    Ok(())
+                }
+            })?;
 
         Ok(Self { map })
     }

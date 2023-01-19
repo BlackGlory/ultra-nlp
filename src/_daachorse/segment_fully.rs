@@ -31,42 +31,44 @@ pub fn segment_fully<T: AsRef<str>>(
             let mut results: Vec<Match> = vec![];
 
             let mut maximum_matched_end_index = 0;
-            for mat in dict.acdat.find_overlapping_iter(&text) {
-                if mat.start() > maximum_matched_end_index {
-                    // 处理匹配结果之前的文本
-                    match behavior_for_unmatched {
-                        BehaviorForUnmatched::Ignore => panic!("Rust is stupid."),
-                        BehaviorForUnmatched::KeepAsWords => {
-                            results.push(
-                                Match::new(
-                                    TextRange::new(maximum_matched_end_index, mat.start()),
-                                    None
+            dict.acdat.find_overlapping_iter(&text)
+                .for_each(|mat| {
+                    if mat.start() > maximum_matched_end_index {
+                        // 处理匹配结果之前的文本
+                        match behavior_for_unmatched {
+                            BehaviorForUnmatched::Ignore => panic!("Rust is stupid."),
+                            BehaviorForUnmatched::KeepAsWords => {
+                                results.push(
+                                    Match::new(
+                                        TextRange::new(maximum_matched_end_index, mat.start()),
+                                        None
+                                    )
+                                );
+                            },
+                            BehaviorForUnmatched::KeepAsChars => {
+                                let iter = split_as_char_ranges(
+                                    &text[maximum_matched_end_index..mat.start()]
                                 )
-                            );
-                        },
-                        BehaviorForUnmatched::KeepAsChars => {
-                            for range in split_as_char_ranges(
-                                &text[maximum_matched_end_index..mat.start()]
-                            ) {
-                                results.push(Match::new(range, None));
-                            }
-                        },
-                    }
+                                    .map(|range| Match::new(range, None));
 
-                    // mat.end() > last_match_end_index
-                    maximum_matched_end_index = mat.end();
-                } else {
-                    if mat.end() > maximum_matched_end_index {
+                                results.extend(iter);
+                            },
+                        }
+
+                        // mat.end() > last_match_end_index
                         maximum_matched_end_index = mat.end();
+                    } else {
+                        if mat.end() > maximum_matched_end_index {
+                            maximum_matched_end_index = mat.end();
+                        }
                     }
-                }
 
-                let result = Match::new(
-                    TextRange::new(mat.start(), mat.end()),
-                    Some(mat.value())
-                );
-                results.push(result);
-            }
+                    let result = Match::new(
+                        TextRange::new(mat.start(), mat.end()),
+                        Some(mat.value())
+                    );
+                    results.push(result);
+                });
             if maximum_matched_end_index < text.len() {
                 // 处理text剩余的文本
                 match behavior_for_unmatched {
@@ -77,18 +79,18 @@ pub fn segment_fully<T: AsRef<str>>(
                         ))
                     },
                     BehaviorForUnmatched::KeepAsChars => {
-                        for range in split_as_char_ranges(
-                            &text[maximum_matched_end_index..]
-                        ) {
-                            let result = Match::new(
-                                TextRange::new(
-                                    maximum_matched_end_index + range.start_index(),
-                                    maximum_matched_end_index + range.end_index(),
-                                ),
-                                None,
-                            );
-                            results.push(result);
-                        }
+                        let iter = split_as_char_ranges(&text[maximum_matched_end_index..])
+                            .map(|range| {
+                                Match::new(
+                                    TextRange::new(
+                                        maximum_matched_end_index + range.start_index(),
+                                        maximum_matched_end_index + range.end_index(),
+                                    ),
+                                    None,
+                                )
+                            });
+
+                        results.extend(iter);
                     },
                     BehaviorForUnmatched::Ignore => panic!("Rust is stupid."),
                 }
