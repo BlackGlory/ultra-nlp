@@ -1,4 +1,9 @@
 # ultra-nlp
+## Install
+```sh
+cargo add ultra-nlp
+```
+
 ## Usage
 ### ngrams
 ```rs
