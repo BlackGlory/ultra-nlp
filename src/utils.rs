@@ -1,8 +1,8 @@
 use crate::TextRange;
 
-pub fn split_as_char_ranges(
-    text: &str
-) -> impl Iterator<Item = TextRange> + '_ {
+pub fn split_as_char_ranges<'a>(
+    text: &'a str
+) -> impl Iterator<Item = TextRange> + 'a {
     text
         .char_indices()
         .map(|(start_index, char)| {
