@@ -120,5 +120,65 @@ mod tests {
                 vec!["你好", "好世", "世界"]
             );
         }
+
+        #[test]
+        fn test_emoji_chars_1_gram() {
+            let text = "🌱🌿🌲🌳";
+            let size = 1;
+
+            let result = ngrams(text, size);
+
+            assert_eq!(
+                result
+                    .into_iter()
+                    .collect::<Vec<&str>>(),
+                vec!["🌱", "🌿", "🌲", "🌳"]
+            );
+        }
+
+        #[test]
+        fn test_emoji_chars_2_gram() {
+            let text = "🌱🌿🌲🌳";
+            let size = 2;
+
+            let result = ngrams(text, size);
+
+            assert_eq!(
+                result
+                    .into_iter()
+                    .collect::<Vec<&str>>(),
+                vec!["🌱🌿", "🌿🌲", "🌲🌳"]
+            );
+        }
+
+        #[test]
+        fn test_mix_chars_1_gram() {
+            let text = "f🌱你o";
+            let size = 1;
+
+            let result = ngrams(text, size);
+
+            assert_eq!(
+                result
+                    .into_iter()
+                    .collect::<Vec<&str>>(),
+                vec!["f", "🌱", "你", "o"]
+            );
+        }
+
+        #[test]
+        fn test_mix_chars_2_gram() {
+            let text = "f🌱你o";
+            let size = 2;
+
+            let result = ngrams(text, size);
+
+            assert_eq!(
+                result
+                    .into_iter()
+                    .collect::<Vec<&str>>(),
+                vec!["f🌱", "🌱你", "你o"]
+            );
+        }
     }
 }
