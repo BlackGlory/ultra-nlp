@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.8.0 (2024-02-28)
+- Upgraded dependencies.
+
+### ⚠ BREAKING CHANGES
+- Replaced all `u32` with `usize`.
+
 ## 0.7.2 (2023-01-15)
 - Added `crate::extract_consecutive_letters`.
 
