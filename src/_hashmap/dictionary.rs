@@ -6,7 +6,7 @@ use crate::{
 
 #[derive(Clone)]
 pub struct Dictionary {
-    pub(crate) map: HashMap<String, u32>,
+    pub(crate) map: HashMap<String, usize>,
 }
 
 impl Dictionary {
@@ -18,7 +18,7 @@ impl Dictionary {
             return Err(UltraNLPError::new("The patterns cannot be empty"));
         }
 
-        let mut map: HashMap<String, u32> = HashMap::new();
+        let mut map: HashMap<String, usize> = HashMap::new();
         patterns_with_values
             .into_iter()
             .try_for_each(|(pattern, value)| {
@@ -40,16 +40,16 @@ fn prepare_patterns_for_dictionary<
     I: IntoIterator<Item = T>
 >(
     patterns: I,
-) -> UltraNLPResult<Vec<(String, u32)>> {
+) -> UltraNLPResult<Vec<(String, usize)>> {
     let patterns_with_values = patterns
         .into_iter()
         .enumerate()
-        .map(|(index, pattern)| -> Result<(String, u32), _>{
+        .map(|(index, pattern)| -> Result<(String, usize), _>{
             let pattern = pattern
                 .as_ref()
                 .to_lowercase();
 
-            let value = u32::try_from(index)
+            let value = usize::try_from(index)
                 .map_err(|err| UltraNLPError::new(err.to_string()))?;
 
             Ok((pattern, value))

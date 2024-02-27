@@ -28,7 +28,7 @@ pub fn segment_backward_longest<T: AsRef<str>>(
             let mut matched_results: Vec<Match> = vec![];
             let mut longest_match: Option<(
                 usize, // start_index
-                u32, // value
+                usize, // value
             )> = None;
             (0..end_index)
                 .rev()

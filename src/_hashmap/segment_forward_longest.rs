@@ -28,7 +28,7 @@ pub fn segment_forward_longest<T: AsRef<str>>(
             let mut matched_results: Vec<Match> = vec![];
             let mut longest_match: Option<(
                 usize, // end_index
-                u32, // value
+                usize, // value
             )> = None;
             ((start_index + 1)..=text.len())
                 .into_iter()

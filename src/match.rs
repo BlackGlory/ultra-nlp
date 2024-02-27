@@ -5,11 +5,11 @@ pub struct Match {
     range: TextRange,
 
     // 在保留未匹配内容的情况下, 匹配到的内容有可能不在字典里.
-    index_of_patterns: Option<u32>,
+    index_of_patterns: Option<usize>,
 }
 
 impl Match {
-    pub fn new(range: TextRange, index_of_patterns: Option<u32>) -> Self {
+    pub fn new(range: TextRange, index_of_patterns: Option<usize>) -> Self {
         Self { range, index_of_patterns }
     }
 
@@ -17,7 +17,7 @@ impl Match {
         self.range
     }
 
-    pub fn index_of_patterns(&self) -> Option<u32> {
+    pub fn index_of_patterns(&self) -> Option<usize> {
         self.index_of_patterns
     }
 

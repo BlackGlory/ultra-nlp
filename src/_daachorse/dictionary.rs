@@ -10,17 +10,17 @@ use crate::{
 
 #[derive(Clone)]
 pub struct StandardDictionary {
-    pub(crate) acdat: DoubleArrayAhoCorasick<u32>,
+    pub(crate) acdat: DoubleArrayAhoCorasick<usize>,
 }
 
 #[derive(Clone)]
 pub struct ForwardDictionary {
-    pub(crate) acdat: DoubleArrayAhoCorasick<u32>,
+    pub(crate) acdat: DoubleArrayAhoCorasick<usize>,
 }
 
 #[derive(Clone)]
 pub struct BackwardDictionary {
-    pub(crate) acdat: DoubleArrayAhoCorasick<u32>,
+    pub(crate) acdat: DoubleArrayAhoCorasick<usize>,
 }
 
 impl StandardDictionary {
@@ -82,11 +82,11 @@ impl BackwardDictionary {
 
 fn create_acdat_with_values<
     T: AsRef<str>,
-    I: IntoIterator<Item = (T, u32)>
+    I: IntoIterator<Item = (T, usize)>
 >(
     patterns_with_values: I,
     match_kind: MatchKind,
-) -> UltraNLPResult<DoubleArrayAhoCorasick<u32>> {
+) -> UltraNLPResult<DoubleArrayAhoCorasick<usize>> {
     let acdat = DoubleArrayAhoCorasickBuilder::new()
         .match_kind(match_kind)
         .build_with_values(patterns_with_values);
@@ -99,16 +99,16 @@ fn prepare_patterns_for_dictionary<
     I: IntoIterator<Item = T>
 >(
     patterns: I,
-) -> UltraNLPResult<Vec<(String, u32)>> {
+) -> UltraNLPResult<Vec<(String, usize)>> {
     let patterns_with_values = patterns
         .into_iter()
         .enumerate()
-        .map(|(i, pattern)| -> Result<(String, u32), _>{
+        .map(|(i, pattern)| -> Result<(String, usize), _>{
             let pattern = pattern
                 .as_ref()
                 .to_lowercase();
 
-            let value = u32::try_from(i)
+            let value = usize::try_from(i)
                 .map_err(|err| UltraNLPError::new(err.to_string()))?;
 
             Ok((pattern, value))

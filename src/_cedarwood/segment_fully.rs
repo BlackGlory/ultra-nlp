@@ -30,9 +30,9 @@ pub fn segment_fully<T: AsRef<str>>(
                             start_index,
                             start_index + length + 1
                         );
-                        let value = u32::try_from(id)
+                        let value = usize::try_from(id)
                             .map_err(|err| UltraNLPError::new(err.to_string()))
-                            // 没有使用负数值, 且u32的最大值大于i32, 转换应当总是能成功
+                            // 没有使用负数值, 且usize的最大值大于i32, 转换应当总是能成功
                             .unwrap();
 
                         let result = Match::new(range, Some(value));
