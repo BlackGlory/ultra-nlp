@@ -10,7 +10,6 @@ repository = "https://github.com/BlackGlory/ultra-nlp"
 
 [dependencies]
 daachorse = "1.0.0"
-yada = "0.5.1"
 cedarwood = "0.4.6"
 regex = "1.10.3"
 lazy_static = "1.4.0"
