@@ -1,7 +1,7 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 
-pub fn extract_consecutive_letters(text: &str) -> impl Iterator<Item = &str>{
+pub fn extract_consecutive_letters(text: &str) -> impl Iterator<Item = &str> {
     lazy_static! {
         static ref RE: Regex = Regex::new(r"\p{General_Category=Letter}+").unwrap();
     }
