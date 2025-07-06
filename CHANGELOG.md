@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.9.0 (2025-07-06)
+- Upgraded dependencies.
+- Improved `TextRange#extract` to handle edge cases.
+
+### ⚠ BREAKING CHANGES
+- `TextRange#extract` now returns `Option<&'a str>` instead of `&'a str`.
+- Changed Rust edition from 2021 to 2024.
+
 ## 0.8.0 (2024-02-28)
 - Upgraded dependencies.
 
