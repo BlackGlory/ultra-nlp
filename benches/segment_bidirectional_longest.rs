@@ -1,4 +1,5 @@
-use criterion::{criterion_group, criterion_main, Criterion, black_box};
+use std::hint::black_box;
+use criterion::{criterion_group, criterion_main, Criterion};
 use ultra_nlp::{daachorse, cedarwood, hashmap, BehaviorForUnmatched};
 
 criterion_group!(benches, bench_segment_bidirectional_longest);

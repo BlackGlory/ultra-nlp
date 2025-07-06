@@ -11,11 +11,11 @@ repository = "https://github.com/BlackGlory/ultra-nlp"
 [dependencies]
 daachorse = "1.0.0"
 cedarwood = "0.4.6"
-regex = "1.10.3"
-lazy_static = "1.4.0"
+regex = "1.11.1"
+lazy_static = "1.5.0"
 
 [dev-dependencies]
-criterion = "0.5.1"
+criterion = "0.6.0"
 
 [[bench]]
 name = "dictionary"
