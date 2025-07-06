@@ -188,7 +188,7 @@ mod tests {
         assert_eq!(
             result
                 .into_iter()
-                .map(|x| x.range().extract(text))
+                .map(|x| x.range().extract(text).unwrap())
                 .collect::<Vec<_>>(),
             vec!["商品", "服务",]
         );
@@ -210,7 +210,7 @@ mod tests {
         assert_eq!(
             result
                 .into_iter()
-                .map(|x| x.range().extract(text))
+                .map(|x| x.range().extract(text).unwrap())
                 .collect::<Vec<_>>(),
             vec![
                 " ",
@@ -251,7 +251,7 @@ mod tests {
         assert_eq!(
             result
                 .into_iter()
-                .map(|x| x.range().extract(text))
+                .map(|x| x.range().extract(text).unwrap())
                 .collect::<Vec<_>>(),
             vec![
                 " ",
@@ -306,7 +306,7 @@ mod tests {
         assert_eq!(
             result
                 .into_iter()
-                .map(|x| x.range().extract(text))
+                .map(|x| x.range().extract(text).unwrap())
                 .collect::<Vec<_>>(),
             vec!["你好", "世界"]
         );

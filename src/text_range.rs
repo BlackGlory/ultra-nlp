@@ -24,8 +24,8 @@ impl TextRange {
         self.end_index - self.start_index
     }
 
-    pub fn extract<'a>(&self, text: &'a str) -> &'a str {
-        &text[self.start_index..self.end_index]
+    pub fn extract<'a>(&self, text: &'a str) -> Option<&'a str> {
+        text.get(self.start_index..self.end_index)
     }
 }
 
@@ -49,7 +49,7 @@ mod tests {
 
         let result = range.extract(text);
 
-        assert_eq!(result, "e");
+        assert_eq!(result, Some("e"));
     }
 
     #[test]
@@ -59,6 +59,16 @@ mod tests {
 
         let result = range.extract(text);
 
-        assert_eq!(result, "好");
+        assert_eq!(result, Some("好"));
+    }
+
+    #[test]
+    fn test_extract_invalid_text() {
+        let text = "你好世界";
+        let range = TextRange::new(0, 1);
+
+        let result = range.extract(text);
+
+        assert_eq!(result, None);
     }
 }

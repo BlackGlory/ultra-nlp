@@ -25,7 +25,7 @@ mod tests {
         assert_eq!(
             result
                 .into_iter()
-                .map(|x| x.extract(text))
+                .map(|x| x.extract(text).unwrap())
                 .collect::<Vec<_>>(),
             vec![
                 " ",

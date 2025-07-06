@@ -50,8 +50,10 @@ pub fn segment_bidirectional_longest<T: AsRef<str>>(
 fn count_single_chars<T: AsRef<str>>(matches: &Vec<Match>, text: T) -> usize {
     matches
         .into_iter()
-        .map(|mat | {
-            if mat.range().extract(text.as_ref()).chars().count() == 1 {
+        .map(|mat| {
+            if mat.range().extract(text.as_ref())
+                .map(|text| text.chars().count() == 1)
+                .unwrap_or(false) {
                 1
             } else {
                 0
@@ -95,7 +97,7 @@ mod tests {
         assert_eq!(
             result
                 .into_iter()
-                .map(|x| x.range().extract(text))
+                .map(|x| x.range().extract(text).unwrap())
                 .collect::<Vec<_>>(),
             vec!["当下", "雨天", "地面", "积水"]
         )
@@ -119,7 +121,7 @@ mod tests {
         assert_eq!(
             result
                 .into_iter()
-                .map(|x| x.range().extract(text))
+                .map(|x| x.range().extract(text).unwrap())
                 .collect::<Vec<_>>(),
             vec!["商品", "服务",]
         )
@@ -140,7 +142,7 @@ mod tests {
         assert_eq!(
             result
                 .into_iter()
-                .map(|x| x.range().extract(text))
+                .map(|x| x.range().extract(text).unwrap())
                 .collect::<Vec<_>>(),
             vec!["商品", "服务",]
         )
@@ -161,7 +163,7 @@ mod tests {
         assert_eq!(
             result
                 .into_iter()
-                .map(|x| x.range().extract(text))
+                .map(|x| x.range().extract(text).unwrap())
                 .collect::<Vec<_>>(),
             vec![
                 " ",
@@ -210,7 +212,7 @@ mod tests {
         assert_eq!(
             result
                 .into_iter()
-                .map(|x| x.range().extract(text))
+                .map(|x| x.range().extract(text).unwrap())
                 .collect::<Vec<_>>(),
             vec![" ", "当下", "雨天", "地面", "积水", ", hello world "]
         )
@@ -264,7 +266,7 @@ mod tests {
         assert_eq!(
             result
                 .into_iter()
-                .map(|x| x.range().extract(text))
+                .map(|x| x.range().extract(text).unwrap())
                 .collect::<Vec<_>>(),
             vec!["你好", "世界"]
         );
