@@ -70,7 +70,7 @@ let result = segment_fully(
 assert_eq!(
     result
         .iter()
-        .map(|x| x.range().extract(text))
+        .map(|x| x.range().extract(text).unwrap())
         .collect::<Vec<_>>(),
     vec!["南京", "南京市", "市长", "长江", "大桥"]
 );
@@ -98,7 +98,7 @@ let result = segment_fully(
 assert_eq!(
     result
         .iter()
-        .map(|x| x.range().extract(text))
+        .map(|x| x.range().extract(text).unwrap())
         .collect::<Vec<_>>(),
     vec![
         " ", "南京", "南京市", "市长", "长江", "大桥", ",", " ", "h", "e", "l", "l", "o", " ", "w", "o", "r", "l", "d", " ",
@@ -128,7 +128,7 @@ let result = segment_fully(
 assert_eq!(
     result
         .iter()
-        .map(|x| x.range().extract(text))
+        .map(|x| x.range().extract(text).unwrap())
         .collect::<Vec<_>>(),
     vec![
         " ", "南京", "南京市", "市长", "长江", "大桥", ", hello world ",
@@ -155,7 +155,7 @@ let result = segment_fully(text, &dict, BehaviorForUnmatched::Ignore);
 assert_eq!(
     result
         .iter()
-        .map(|x| x.range().extract(text))
+        .map(|x| x.range().extract(text).unwrap())
         .collect::<Vec<_>>(),
     vec![
       "南京", "南京市", "市长", "长江", "大桥",
@@ -181,7 +181,7 @@ let result = segment_fully(text, &dict, BehaviorForUnmatched::KeepAsChars);
 assert_eq!(
     result
         .iter()
-        .map(|x| x.range().extract(text))
+        .map(|x| x.range().extract(text).unwrap())
         .collect::<Vec<_>>(),
     vec![
         " ", "南京", "南京市", "市长", "长江", "大桥", ",", " ", "h", "e", "l", "l", "o", " ", "w", "o", "r", "l", "d", " ",
@@ -207,7 +207,7 @@ let result = segment_fully(text, &dict, BehaviorForUnmatched::KeepAsWords);
 assert_eq!(
     result
         .iter()
-        .map(|x| x.range().extract(text))
+        .map(|x| x.range().extract(text).unwrap())
         .collect::<Vec<_>>(),
     vec![
         " ", "南京", "南京市", "市长", "长江", "大桥", ", hello world ",
